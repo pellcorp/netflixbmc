@@ -42,10 +42,7 @@ public class NetflixbmcActivity extends Activity {
 			final Intent intent = getIntent();
 			String url = intent.getDataString();
 
-			JsonClient jsonClient = new JsonClientImpl(
-					preferences.getHost(), 
-					preferences.getUsername(), 
-					preferences.getPassword());
+			JsonClient jsonClient = new JsonClientImpl(preferences.getUrl());
 			
 			try {
 				SendToXbmc task = new SendToXbmc(jsonClient);
@@ -125,9 +122,5 @@ public class NetflixbmcActivity extends Activity {
 		protected Boolean doInBackground(String... params) {
 			return sender.sendMovie(params[0]);
 		}
-		
-		protected void onPostExecute(Boolean result) {
-			
-	    }
 	}
 }

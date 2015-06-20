@@ -17,18 +17,10 @@ public class Preferences {
 	}
 	
 	public boolean isConfigured() {
-		return getUsername() != null && getPassword() != null && getHost() != null;
+		return getUrl() != null;
 	}
 	
-	public String getHost() {
+	public String getUrl() {
 		return preferenceProvider.getString(R.string.pref_host_url);
-	}
-	
-	public String getUsername() {
-		return preferenceProvider.getString(R.string.pref_username);
-	}
-	
-	public String getPassword() {
-		return preferenceProvider.getString(R.string.pref_password);
 	}
 }

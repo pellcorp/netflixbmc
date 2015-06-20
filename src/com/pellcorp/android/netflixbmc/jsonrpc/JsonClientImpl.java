@@ -1,7 +1,5 @@
 package com.pellcorp.android.netflixbmc.jsonrpc;
 
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -11,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
-import com.thetransactioncompany.jsonrpc2.client.ConnectionConfigurator;
 import com.thetransactioncompany.jsonrpc2.client.JSONRPC2Session;
 import com.thetransactioncompany.jsonrpc2.client.JSONRPC2SessionException;
 import com.thetransactioncompany.jsonrpc2.client.JSONRPC2SessionOptions;
@@ -22,23 +19,9 @@ public class JsonClientImpl implements JsonClient {
 	private final AtomicLong requestIdGen = new AtomicLong();
 	private final JSONRPC2Session session;
 
-	public JsonClientImpl(String url, final String username, final String password) {
+	public JsonClientImpl(String url) {
 		try {
 			this.session = new JSONRPC2Session(new URL(url + "/jsonrpc"));
-			
-			session.setConnectionConfigurator(new ConnectionConfigurator() {
-			
-				@Override
-				public void configure(HttpURLConnection connection) {
-	//				try {
-	//					String encoded = new String(
-	//							Base64.encodeBase64((username+":"+password).getBytes("UTF-8")), "UTF-8");
-	//					connection.setRequestProperty("Authorization", "Basic "+encoded);
-	//				} catch (UnsupportedEncodingException e) {
-	//					logger.error("Failed to authenticate", e);
-	//				} 
-				}
-			});
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Invalid URL: " + url);
 		}
