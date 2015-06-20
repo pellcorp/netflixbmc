@@ -49,14 +49,13 @@ public class NetflixbmcActivity extends Activity {
 			
 			try {
 				SendToXbmc task = new SendToXbmc(jsonClient);
-				if (task.get()) {
-					Dialog dialog = createErrorDialog("Submission was successful");
-					dialog.show();
+				Boolean result = task.execute(url).get();
+				if (result) {
+					finish();
 				} else {
 					Dialog dialog = createErrorDialog("Submission failed");
 					dialog.show();
 				}
-				
 			} catch (Exception e) {
 				StringWriter swriter = new StringWriter();
 				PrintWriter writer = new PrintWriter(swriter);
@@ -65,8 +64,6 @@ public class NetflixbmcActivity extends Activity {
 				dialog.show();
 			}
 		}
-		
-//		finish();
 	}
 	
 	@Override
@@ -128,5 +125,9 @@ public class NetflixbmcActivity extends Activity {
 		protected Boolean doInBackground(String... params) {
 			return sender.sendMovie(params[0]);
 		}
+		
+		protected void onPostExecute(Boolean result) {
+			
+	    }
 	}
 }
