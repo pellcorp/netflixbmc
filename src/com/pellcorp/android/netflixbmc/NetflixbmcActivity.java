@@ -1,7 +1,5 @@
 package com.pellcorp.android.netflixbmc;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
 
 import org.slf4j.Logger;
