@@ -90,10 +90,9 @@ public class NetflixbmcActivity extends Activity {
 
 	private AlertDialog createSettingsMissingDialog(String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-		builder.setMessage(message)
-				.setCancelable(true)
-				.setPositiveButton(R.string.settings_label,
+		builder.setMessage(message);
+		
+		builder.setPositiveButton(R.string.settings_label,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								startActivity(new Intent(
