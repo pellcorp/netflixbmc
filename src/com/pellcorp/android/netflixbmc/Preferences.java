@@ -21,6 +21,10 @@ public class Preferences {
 	}
 	
 	public String getUrl() {
-		return preferenceProvider.getString(R.string.pref_host_url);
+		String url = preferenceProvider.getString(R.string.pref_host_url);
+		if (url.endsWith("/")) {
+			url = url.substring(0, url.length() - 2);
+		}
+		return url + "/jsonrpc";
 	}
 }

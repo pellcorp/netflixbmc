@@ -20,6 +20,8 @@ public class JsonClientImpl implements JsonClient {
 	private final JSONRPC2Session session;
 
 	public JsonClientImpl(URL url) {
+		logger.info("Kodi URL: {}", url);
+		
 		this.session = new JSONRPC2Session(url);
 	}
 
