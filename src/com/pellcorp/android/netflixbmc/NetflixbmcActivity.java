@@ -2,6 +2,7 @@ package com.pellcorp.android.netflixbmc;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ import android.view.MenuItem;
 
 import com.pellcorp.android.netflixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientImpl;
+import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientResponse;
+import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientUtils;
 import com.pellcorp.android.netflixbmc.jsonrpc.MovieIdSender;
 
 public class NetflixbmcActivity extends Activity {
@@ -33,31 +36,30 @@ public class NetflixbmcActivity extends Activity {
 		preferences = Preferences.getPreferences(this);
 		
 		logger.info("Starting onCreate");
-		logger.info("Starting onStart");
 
 		if (!preferences.isConfigured()) {
 			Dialog dialog = createSettingsMissingDialog(getString(R.string.missing_connection_details));
 			dialog.show();
 		} else {
-			final Intent intent = getIntent();
-			String url = intent.getDataString();
-
-			JsonClient jsonClient = new JsonClientImpl(preferences.getUrl());
-			
 			try {
+				final Intent intent = getIntent();
+				String url = intent.getDataString();
+
+				JsonClient jsonClient = new JsonClientImpl(new URL(preferences.getUrl()));
+				
 				SendToXbmc task = new SendToXbmc(jsonClient);
-				Boolean result = task.execute(url).get();
-				if (result) {
+				JsonClientResponse result = task.execute(url).get();
+				
+				if (result.isSuccess()) {
 					finish();
-				} else {
-					Dialog dialog = createErrorDialog("Submission failed");
-					dialog.show();
+					if (result.isError()) {
+						Dialog dialog = createErrorDialog(result.getErrorMessage());
+						dialog.show();
+					}
 				}
 			} catch (Exception e) {
-				StringWriter swriter = new StringWriter();
-				PrintWriter writer = new PrintWriter(swriter);
-				e.printStackTrace(writer);
-				Dialog dialog = createErrorDialog(swriter.toString());
+				String stackTrace = JsonClientUtils.getStackTrace(e);
+				Dialog dialog = createErrorDialog(stackTrace);
 				dialog.show();
 			}
 		}
@@ -82,16 +84,10 @@ public class NetflixbmcActivity extends Activity {
 	}
 
 	private AlertDialog createErrorDialog(String message) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(message)
-				.setCancelable(false)
-				.setNeutralButton(android.R.string.ok,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
-							}
-						});
-
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error Message");
+        builder.setMessage(message);
+        builder.setPositiveButton(android.R.string.ok, null);
 		return builder.create();
 	}
 
@@ -111,7 +107,7 @@ public class NetflixbmcActivity extends Activity {
 		return builder.create();
 	}
 	
-	private class SendToXbmc extends AsyncTask<String, Integer, Boolean> {
+	private class SendToXbmc extends AsyncTask<String, Integer, JsonClientResponse> {
 		private MovieIdSender sender;
 		
 		public SendToXbmc(JsonClient jsonClient) {
@@ -119,8 +115,9 @@ public class NetflixbmcActivity extends Activity {
 		}
 		
 		@Override
-		protected Boolean doInBackground(String... params) {
-			return sender.sendMovie(params[0]);
+		protected JsonClientResponse doInBackground(String... params) {
+			String movieId = params[0];
+			return sender.sendMovie(movieId);
 		}
 	}
 }

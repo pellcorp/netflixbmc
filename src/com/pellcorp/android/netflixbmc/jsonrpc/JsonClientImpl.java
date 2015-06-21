@@ -19,34 +19,34 @@ public class JsonClientImpl implements JsonClient {
 	private final AtomicLong requestIdGen = new AtomicLong();
 	private final JSONRPC2Session session;
 
-	public JsonClientImpl(String url) {
-		try {
-			this.session = new JSONRPC2Session(new URL(url + "/jsonrpc"));
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Invalid URL: " + url);
-		}
+	public JsonClientImpl(URL url) {
+		this.session = new JSONRPC2Session(url);
 	}
 
-	public boolean send(String method, Map<String, Object> params)
-			throws JsonClientException {
-		String requestId = requestIdGen.incrementAndGet() + "";
-		JSONRPC2Request request = new JSONRPC2Request(method, requestId);
-		request.setNamedParams(params);
-		
-		System.out.println(request);
-		
-		JSONRPC2SessionOptions options = new JSONRPC2SessionOptions();
-		options.setAllowedResponseContentTypes(new String[] {"application/json"});
-		options.setConnectTimeout(10000);
-		options.setReadTimeout(30000);
-		
-		session.setOptions(options);
+	public JsonClientResponse send(String method, Map<String, Object> params) {
 		try {
+			String requestId = requestIdGen.incrementAndGet() + "";
+			JSONRPC2Request request = new JSONRPC2Request(method, requestId);
+			request.setNamedParams(params);
+			
+			logger.debug(request.toString());
+			
+			JSONRPC2SessionOptions options = new JSONRPC2SessionOptions();
+			options.setAllowedResponseContentTypes(new String[] {"application/json"});
+			options.setConnectTimeout(10000);
+			options.setReadTimeout(30000);
+			
+			session.setOptions(options);
+		
 			JSONRPC2Response response = session.send(request);
-			return response.indicatesSuccess();
+			if (response.indicatesSuccess()) {
+				return new JsonClientResponse();
+			} else {
+				return new JsonClientResponse(response.getError().toString());
+			}
 		} catch (JSONRPC2SessionException e) {
 			logger.error("Failed to send", e);
-			throw new JsonClientException(e);
+			return new JsonClientResponse(e); 
 		}
 	}
 }

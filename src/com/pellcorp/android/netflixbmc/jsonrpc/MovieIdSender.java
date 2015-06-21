@@ -15,7 +15,7 @@ public class MovieIdSender {
 	}
 	
 	//http://www.netflix.com/watch/70259443?trackId=13462050&tctx=1%2C0%2C48d00020-b7c9-46ea-ae58-219011a2ed29-16193513
-	public boolean sendMovie(String url) {
+	public JsonClientResponse sendMovie(String url) {
 		logger.info("URL {}", url);
 		String movieId = getMovieId(url);
 		
@@ -25,7 +25,8 @@ public class MovieIdSender {
 		Map<String, Object> itemParams = new HashMap<String, Object>();
 		params.put("item", itemParams);
 		itemParams.put("file", "plugin://plugin.video.netflixbmc/?mode=playVideo&url=" + movieId);
-		return client.send("Player.Open", params);
+		JsonClientResponse response = client.send("Player.Open", params);
+		return response;
 	}
 	
 	private String getMovieId(String url) {
