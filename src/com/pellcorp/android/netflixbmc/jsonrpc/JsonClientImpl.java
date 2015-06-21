@@ -1,5 +1,6 @@
 package com.pellcorp.android.netflixbmc.jsonrpc;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -7,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.pellcorp.android.netflixbmc.Preferences;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 import com.thetransactioncompany.jsonrpc2.client.JSONRPC2Session;
@@ -19,10 +21,10 @@ public class JsonClientImpl implements JsonClient {
 	private final AtomicLong requestIdGen = new AtomicLong();
 	private final JSONRPC2Session session;
 
-	public JsonClientImpl(URL url) {
-		logger.info("Kodi URL: {}", url);
+	public JsonClientImpl(Preferences preferences) throws MalformedURLException {
+		logger.info("Kodi URL: {}", preferences.getUrl());
 		
-		this.session = new JSONRPC2Session(url);
+		this.session = new JSONRPC2Session(new URL(preferences.getUrl()));
 	}
 
 	public JsonClientResponse send(String method, Map<String, Object> params) {

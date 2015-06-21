@@ -1,7 +1,5 @@
 package com.pellcorp.android.netflixbmc;
 
-import java.net.URL;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +13,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.pellcorp.android.netflixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientImpl;
@@ -43,17 +42,17 @@ public class NetflixbmcActivity extends Activity {
 				final Intent intent = getIntent();
 				String url = intent.getDataString();
 
-				JsonClient jsonClient = new JsonClientImpl(new URL(preferences.getUrl()));
+				JsonClient jsonClient = new JsonClientImpl(preferences);
 				
 				SendToXbmc task = new SendToXbmc(jsonClient);
 				JsonClientResponse result = task.execute(url).get();
 				
 				if (result.isSuccess()) {
+					Toast.makeText(this, R.string.successful_submission, Toast.LENGTH_SHORT).show();
 					finish();
-					if (result.isError()) {
-						Dialog dialog = createErrorDialog(result.getErrorMessage());
-						dialog.show();
-					}
+				} else if (result.isError()) {
+					Dialog dialog = createErrorDialog(result.getErrorMessage());
+					dialog.show();
 				}
 			} catch (Exception e) {
 				String stackTrace = JsonClientUtils.getStackTrace(e);

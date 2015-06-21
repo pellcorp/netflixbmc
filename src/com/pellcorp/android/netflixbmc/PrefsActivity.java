@@ -19,6 +19,7 @@ public class PrefsActivity extends PreferenceActivity {
 		EditTextPreference urlPref = (EditTextPreference) 
 				getPreferenceScreen().findPreference(getString(R.string.pref_host_url));
 		
+		
 		urlPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 	        @Override
 	        public boolean onPreferenceChange(Preference preference, Object newValue) {
