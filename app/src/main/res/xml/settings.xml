@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:orderingFromXml="true">
+
+    <PreferenceCategory android:title="@string/settings_label">
+         <EditTextPreference
+            android:defaultValue=""
+            android:key="@string/pref_host_url"
+            android:summary="@string/host_url_summary"
+            android:title="@string/host_url_title" />
+    </PreferenceCategory>
+</PreferenceScreen>

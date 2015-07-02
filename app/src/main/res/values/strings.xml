@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Netflixbmc Client</string>
+    
+    <string name="settings_label">Kodi RPC Settings</string>
+    <string name="settings_shortcut">s</string>
+    
+    <string name="host_url_title">Url</string>
+    <string name="host_url_summary">Specify a http://host:port</string>
+    
+    <string name="pref_host_url">url</string>
+    
+    <string name="missing_connection_details">Missing Rpc Details</string>
+    
+    <string name="successful_submission">Successful Submission</string>
+</resources>
