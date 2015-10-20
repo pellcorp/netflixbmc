@@ -15,11 +15,8 @@ import android.widget.Toast;
 
 import com.pellcorp.android.netflixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientImpl;
-import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientResponse;
-import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientUtils;
 import com.pellcorp.android.netflixbmc.jsonrpc.KodiNetflixChecker;
 import com.pellcorp.android.netflixbmc.jsonrpc.KodiNetflixChecker.KodiNetflixCheckerStatus;
-import com.pellcorp.android.netflixbmc.jsonrpc.MovieIdSender;
 
 public class PrefsActivity extends PreferenceActivity {
 	public PrefsActivity() {

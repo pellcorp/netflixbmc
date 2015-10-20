@@ -3,3 +3,11 @@
 bin
 .settings
 *.apk
+.idea
+gradle
+build
+*.iml
+.gradle
+gradlew
+gradlew.bat
+local.properties

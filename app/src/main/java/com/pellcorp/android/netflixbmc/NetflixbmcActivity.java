@@ -8,10 +8,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,14 +30,13 @@ public class NetflixbmcActivity extends Activity {
 
         logger.info("Starting onCreate");
 
-        String url = getPreference(R.string.pref_host_url);
-		if (url == null) {
+        Preferences preferences = new Preferences(this);
+        if (!preferences.isConfigured()) {
 			Dialog dialog = createSettingsMissingDialog(getString(R.string.missing_connection_details));
 			dialog.show();
 		} else {
 			try {
-				//final Intent intent = getIntent();
-
+                String url = preferences.getString(R.string.pref_host_url);
 				JsonClient jsonClient = new JsonClientImpl(url);
 				
 				SendToXbmc task = new SendToXbmc(jsonClient);
@@ -59,16 +56,6 @@ public class NetflixbmcActivity extends Activity {
 			}
 		}
 	}
-
-    private String getPreference(int resId) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String value = preferences.getString(getString(resId), null);
-        if (value != null && value.length() == 0) {
-            return null;
-        } else {
-            return value;
-        }
-    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

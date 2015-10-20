@@ -4,9 +4,21 @@
 
     <PreferenceCategory android:title="@string/settings_label">
          <EditTextPreference
-            android:defaultValue=""
+            android:defaultValue="http://localhost:8080"
             android:key="@string/pref_host_url"
-            android:summary="@string/host_url_summary"
-            android:title="@string/host_url_title" />
+            android:summary="@string/pref_url_summary"
+            android:title="@string/pref_url_title" />
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="@string/pref_netflix_username"
+            android:summary="@string/pref_netflix_username_summary"
+            android:title="@string/pref_netflix_username_title" />
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="@string/pref_netflix_password"
+            android:summary="@string/pref_netflix_password_summary"
+            android:title="@string/pref_netflix_password_title" />
     </PreferenceCategory>
 </PreferenceScreen>

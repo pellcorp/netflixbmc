@@ -27,6 +27,19 @@
         android:name=".NetflixbmcClientApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
+
+        <activity
+            android:name=".NetflixWebViewActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.DeviceDefault">
+
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
         <activity
             android:name=".NetflixbmcActivity"
             android:label="@string/app_name"
@@ -61,6 +74,8 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
+        -->
+
         <activity
             android:name=".PrefsActivity"
             android:label="@string/app_name"
