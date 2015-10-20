@@ -13,4 +13,8 @@
     <string name="missing_connection_details">Missing Rpc Details</string>
     
     <string name="successful_submission">Successful Submission</string>
+
+    <string name="checking_kodi_url">Checking Kodi RPC Url Configuration</string>
+
+    <string name="kodi_url_config_is_valid">Kodi RPC Url Configuration is valid</string>
 </resources>

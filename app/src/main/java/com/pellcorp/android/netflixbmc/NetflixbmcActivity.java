@@ -8,8 +8,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,25 +26,21 @@ import com.pellcorp.android.netflixbmc.jsonrpc.MovieIdSender;
 public class NetflixbmcActivity extends Activity {
 	private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-	private Preferences preferences;
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		preferences = Preferences.getPreferences(this);
-		
-		logger.info("Starting onCreate");
+        logger.info("Starting onCreate");
 
-		if (!preferences.isConfigured()) {
+        String url = getPreference(R.string.pref_host_url);
+		if (url == null) {
 			Dialog dialog = createSettingsMissingDialog(getString(R.string.missing_connection_details));
 			dialog.show();
 		} else {
 			try {
-				final Intent intent = getIntent();
-				String url = intent.getDataString();
+				//final Intent intent = getIntent();
 
-				JsonClient jsonClient = new JsonClientImpl(preferences);
+				JsonClient jsonClient = new JsonClientImpl(url);
 				
 				SendToXbmc task = new SendToXbmc(jsonClient);
 				JsonClientResponse result = task.execute(url).get();
@@ -61,7 +59,17 @@ public class NetflixbmcActivity extends Activity {
 			}
 		}
 	}
-	
+
+    private String getPreference(int resId) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String value = preferences.getString(getString(resId), null);
+        if (value != null && value.length() == 0) {
+            return null;
+        } else {
+            return value;
+        }
+    }
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);

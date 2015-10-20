@@ -6,7 +6,7 @@
     android:versionName="0.0.6" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="18"
         android:targetSdkVersion="18" />
 
 
@@ -46,6 +46,7 @@
                     android:host="netflix.com"
                     android:pathPrefix="/watch/"
                     android:scheme="https" />
+
                 <data
                     android:host="netflix.com"
                     android:pathPrefix="/watch/"
