@@ -91,7 +91,14 @@ public class NetflixLogin {
             if (response.getStatusLine().getStatusCode() == 302) {
                 return true;
             } else {
-                return false;
+                String html = EntityUtils.toString(response.getEntity());
+                Document doc = Jsoup.parse(html, LOGIN_URL);
+                Elements elements = doc.getElementsByAttributeValue("id", "page-LOGIN");
+                if (elements.size() > 0) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
         } catch (Exception e) {
             logger.error("Failed to login", e);
