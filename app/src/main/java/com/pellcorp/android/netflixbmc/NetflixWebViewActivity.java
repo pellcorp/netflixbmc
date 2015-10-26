@@ -10,6 +10,12 @@ import android.view.MenuItem;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
+import android.widget.Toast;
+
+import com.pellcorp.android.netflixbmc.jsonrpc.JsonClient;
+import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientImpl;
+import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientResponse;
+import com.pellcorp.android.netflixbmc.jsonrpc.MovieIdSender;
 
 import org.apache.http.cookie.Cookie;
 import org.slf4j.Logger;
@@ -42,9 +48,14 @@ public class NetflixWebViewActivity extends Activity {
                     CookieSyncManager.getInstance().sync();
                 }
                 webView = (WebView) findViewById(R.id.webView1);
-                webView.setWebViewClient(new NetflixWebViewClient());
+
+                String url = preferences.getString(R.string.pref_host_url);
+                JsonClient jsonClient = new JsonClientImpl(url);
+
+                MovieIdSender sender = new MovieIdSender(jsonClient);
+                webView.setWebViewClient(new NetflixWebViewClient(this, sender));
                 webView.getSettings().setJavaScriptEnabled(true);
-                webView.loadUrl("http://www.netflix.com?preventIntent=true");
+                webView.loadUrl("http://www.netflix.com");
             } else {
                 Dialog dialog = ActivityUtils.createErrorDialog(this,
                         getString(R.string.login_failed));

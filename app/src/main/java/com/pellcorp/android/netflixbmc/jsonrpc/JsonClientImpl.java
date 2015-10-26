@@ -23,7 +23,7 @@ public class JsonClientImpl implements JsonClient {
 	private final AtomicLong requestIdGen = new AtomicLong();
 	private final JSONRPC2Session session;
 
-	public JsonClientImpl(String url) throws MalformedURLException {
+	public JsonClientImpl(String url) {
         URL jsonRpcUrl = toJsonRpcUrl(url);
 
         logger.info("Kodi URL: {}", jsonRpcUrl);
@@ -31,11 +31,15 @@ public class JsonClientImpl implements JsonClient {
 		this.session = new JSONRPC2Session(jsonRpcUrl);
 	}
 
-    private URL toJsonRpcUrl(String url) throws MalformedURLException {
-        if (url.endsWith("/")) {
-            url = url.substring(0, url.length() - 1);
+    private URL toJsonRpcUrl(String url) {
+        try {
+            if (url.endsWith("/")) {
+                url = url.substring(0, url.length() - 1);
+            }
+            return new URL(url + "/jsonrpc");
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
-        return new URL(url + "/jsonrpc");
     }
 
 	public JsonClientResponse send(String method, Map<String, Object> params) {
