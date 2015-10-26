@@ -1,5 +1,7 @@
 package com.pellcorp.android.netflixbmc.jsonrpc;
 
+import android.os.AsyncTask;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +10,12 @@ import java.util.Map;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class KodiNetflixChecker {
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
+    
 	public enum KodiNetflixCheckerStatus {
 		CONNECT_EXCEPTION, MISSING_PLUGIN, NORMAL
 	}
@@ -21,8 +28,24 @@ public class KodiNetflixChecker {
 	public KodiNetflixChecker(JsonClient client) {
 		this.client = client;
 	}
-	
-	public KodiNetflixCheckerStatus doCheck() {
+
+    public KodiNetflixCheckerStatus check() {
+        AsyncTask<Void, Integer, KodiNetflixCheckerStatus> asyncTask = new AsyncTask<Void, Integer, KodiNetflixCheckerStatus>() {
+            @Override
+            protected KodiNetflixCheckerStatus doInBackground(Void ... params) {
+                return doCheck();
+            }
+        };
+
+        try {
+            return asyncTask.execute().get();
+        } catch (Exception e) {
+            logger.error("Failed to execute", e);
+            return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
+        }
+    }
+
+	private KodiNetflixCheckerStatus doCheck() {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("type", "xbmc.python.pluginsource");
 		JsonClientResponse response = client.send("Addons.GetAddons", params);

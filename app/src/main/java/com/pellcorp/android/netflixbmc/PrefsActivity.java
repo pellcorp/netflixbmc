@@ -31,50 +31,29 @@ public class PrefsActivity extends PreferenceActivity {
 		EditTextPreference urlPref = (EditTextPreference) getPreferenceScreen().findPreference(getString(R.string.pref_host_url));
 
 		urlPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-	        @Override
-	        public boolean onPreferenceChange(Preference preference, Object newValue) {
-	            String urlString = (String) newValue;
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                String urlString = (String) newValue;
 
-	            try {
-					JsonClient jsonClient = new JsonClientImpl(urlString);
-					RetrievePluginsFromXbmc task = new RetrievePluginsFromXbmc(jsonClient);
-                    KodiNetflixCheckerStatus status = task.execute().get();
-					if (status.equals(KodiNetflixCheckerStatus.NORMAL)) {
+                try {
+                    JsonClient jsonClient = new JsonClientImpl(urlString);
+                    KodiNetflixChecker checker = new KodiNetflixChecker(jsonClient);
+                    KodiNetflixCheckerStatus status = checker.check();
+                    if (status.equals(KodiNetflixCheckerStatus.NORMAL)) {
                         Toast.makeText(PrefsActivity.this, R.string.kodi_url_config_is_valid, Toast.LENGTH_SHORT).show();
-						return true;
-					} else if (status.equals(KodiNetflixCheckerStatus.MISSING_PLUGIN)) {
-						showError("Invalid Kodi instance", "No netflixbmc plugin");
-						return false;
-					} else {
-						showError("Invalid Kodi instance", "Kodi instance not accessible");
-						return false;
-					}
+                        return true;
+                    } else if (status.equals(KodiNetflixCheckerStatus.MISSING_PLUGIN)) {
+                        ActivityUtils.createErrorDialog(PrefsActivity.this, "No netflixbmc plugin");
+                        return false;
+                    } else {
+                        ActivityUtils.createErrorDialog(PrefsActivity.this, "Kodi instance not accessible");
+                        return false;
+                    }
                 } catch (Exception e) {
-                    showError("Something unexpected happened", e.getMessage());
+                    ActivityUtils.createErrorDialog(PrefsActivity.this, e.getMessage());
                     return false;
                 }
-	        }
-	    });
-	}
-
-	private void showError(String error, String details) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(PrefsActivity.this);
-		builder.setTitle(error);
-		builder.setMessage(details);
-		builder.setPositiveButton(android.R.string.ok, null);
-		builder.show();
-	}
-
-	private class RetrievePluginsFromXbmc extends AsyncTask<Void, Integer, KodiNetflixCheckerStatus> {
-		private final KodiNetflixChecker checker;
-
-		public RetrievePluginsFromXbmc(JsonClient jsonClient) {
-			this.checker = new KodiNetflixChecker(jsonClient);
-		}
-
-		@Override
-		protected KodiNetflixCheckerStatus doInBackground(Void... params) {
-			return checker.doCheck();
-		}
+            }
+        });
 	}
 }

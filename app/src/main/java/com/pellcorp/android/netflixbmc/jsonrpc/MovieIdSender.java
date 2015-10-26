@@ -1,5 +1,7 @@
 package com.pellcorp.android.netflixbmc.jsonrpc;
 
+import android.os.AsyncTask;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,22 @@ public class MovieIdSender {
 	
 	//http://www.netflix.com/watch/70259443?trackId=13462050&tctx=1%2C0%2C48d00020-b7c9-46ea-ae58-219011a2ed29-16193513
 	public JsonClientResponse sendMovie(String url) {
+        AsyncTask<String, Integer, JsonClientResponse> asyncTask = new AsyncTask<String, Integer, JsonClientResponse>() {
+            @Override
+            protected JsonClientResponse doInBackground(String ... params) {
+                return doSendMovie(params[0]);
+            }
+        };
+
+        try {
+            return asyncTask.execute().get();
+        } catch (Exception e) {
+            logger.error("Failed to execute", e);
+            return new JsonClientResponse(e);
+        }
+    }
+
+    private JsonClientResponse doSendMovie(String url) {
 		logger.info("URL {}", url);
 		String movieId = getMovieId(url);
 		

@@ -7,12 +7,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 
+import org.apache.http.cookie.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class NetflixWebViewActivity extends Activity {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
@@ -23,10 +26,34 @@ public class NetflixWebViewActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.webview);
 
-		webView = (WebView) findViewById(R.id.webView1);
-		webView.setWebViewClient(new NetflixWebViewClient());
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.loadUrl("http://www.netflix.com?preventIntent=true");
+        Preferences preferences = new Preferences(this);
+        if (preferences.isConfigured()) {
+
+            String username = preferences.getString(R.string.pref_netflix_username);
+            String password = preferences.getString(R.string.pref_netflix_password);
+            NetflixLogin login = new NetflixLogin();
+            if (login.login(username, password)) {
+                CookieSyncManager.createInstance(this);
+                CookieManager cookieManager = CookieManager.getInstance();
+                List<Cookie> cookies = login.getCookieStore().getCookies();
+                for (Cookie cookie : cookies) {
+                    String cookieString = cookie.getName() + "=" + cookie.getValue() + "; domain=" + cookie.getDomain();
+                    cookieManager.setCookie("netflix.com", cookieString);
+                    CookieSyncManager.getInstance().sync();
+                }
+                webView = (WebView) findViewById(R.id.webView1);
+                webView.setWebViewClient(new NetflixWebViewClient());
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.loadUrl("http://www.netflix.com?preventIntent=true");
+            } else {
+                Dialog dialog = ActivityUtils.createErrorDialog(this,
+                        getString(R.string.login_failed));
+                dialog.show();
+            }
+        } else {
+            Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(R.string.missing_connection_details));
+            dialog.show();
+        }
 	}
 
     @Override
@@ -37,7 +64,7 @@ public class NetflixWebViewActivity extends Activity {
 
         Preferences preferences = new Preferences(this);
         if (!preferences.isConfigured()) {
-            Dialog dialog = createSettingsMissingDialog(getString(R.string.missing_connection_details));
+            Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(R.string.missing_connection_details));
             dialog.show();
         }
     }
@@ -58,21 +85,5 @@ public class NetflixWebViewActivity extends Activity {
                 return true;
         }
         return false;
-    }
-
-    private AlertDialog createSettingsMissingDialog(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setMessage(message)
-                .setCancelable(true)
-                .setPositiveButton(R.string.settings_label,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                startActivity(new Intent(
-                                        NetflixWebViewActivity.this,
-                                        PrefsActivity.class));
-                            }
-                        });
-        return builder.create();
     }
 }

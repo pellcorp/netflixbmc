@@ -30,8 +30,7 @@
 
         <activity
             android:name=".NetflixWebViewActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.DeviceDefault">
+            android:label="@string/app_name">
 
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
@@ -78,14 +77,7 @@
 
         <activity
             android:name=".PrefsActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.Black" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:label="@string/app_name" />
 
     </application>
 
