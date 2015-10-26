@@ -37,7 +37,7 @@ public class NetflixLogin {
     public static final String LOGIN_URL = "https://signup.netflix.com/Login";
     public static final String INDEX_URL = "https://netflix.com/browse/my-list";
     
-    private HttpClient client;
+    private DefaultHttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
     private final HttpContext localContext = new BasicHttpContext();
     
@@ -46,8 +46,8 @@ public class NetflixLogin {
         params.setParameter(AllClientPNames.USER_AGENT, USER_AGENT);
         this.client = new DefaultHttpClient(params);
 
-        CookieStore cookieStore = new BasicCookieStore();
         localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+        this.client.setCookieStore(cookieStore);
     }
     
     public CookieStore getCookieStore() {
