@@ -59,28 +59,15 @@ public class NetflixWebViewActivity extends Activity {
 
                 @Override
                 protected Boolean doInBackground(String... params) {
-                    NetflixLogin login = new NetflixLogin();
                     String email = params[0];
                     String password = params[1];
-                    if (login.login(email, password)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return doLogin(email, password);
                 }
 
                 @Override
                 protected void onPostExecute(Boolean result) {
                     asyncDialog.dismiss();
-
-                    if (result) {
-                        webView.loadUrl("http://www.netflix.com");
-                    } else {
-                        Dialog dialog = ActivityUtils.createErrorDialog(
-                                NetflixWebViewActivity.this,
-                                getString(R.string.login_failed));
-                        dialog.show();
-                    }
+                    postExecute(result);
                     super.onPostExecute(result);
                 }
             };
@@ -91,6 +78,22 @@ public class NetflixWebViewActivity extends Activity {
             dialog.show();
         }
 	}
+
+    private void postExecute(Boolean result) {
+        if (result) {
+            webView.loadUrl("http://www.netflix.com");
+        } else {
+            Dialog dialog = ActivityUtils.createErrorDialog(
+                    this,
+                    getString(R.string.login_failed));
+            dialog.show();
+        }
+    }
+
+    private boolean doLogin(String email, String password) {
+        NetflixLogin login = new NetflixLogin();
+        return login.login(email, password);
+    }
 
     @Override
     protected void onStart() {
