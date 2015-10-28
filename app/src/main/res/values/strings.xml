@@ -27,4 +27,7 @@
     <string name="checking_kodi_url">Checking Kodi RPC Url Configuration</string>
 
     <string name="kodi_url_config_is_valid">Kodi RPC Url Configuration is valid</string>
+
+    <string name="logging_in">Logging in...</string>
+    <string name="please_wait">Please wait...</string>
 </resources>

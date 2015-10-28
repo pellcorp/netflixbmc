@@ -2,6 +2,7 @@ package com.pellcorp.android.netflixbmc;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Bitmap;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -17,17 +18,19 @@ public class NetflixWebViewClient extends WebViewClient {
 
     private final Activity activity;
     private final MovieIdSender sender;
+    private final NetflixWebViewClientListener listener;
 
     public NetflixWebViewClient(Activity activity, MovieIdSender sender) {
         this.activity = activity;
         this.sender = sender;
+        this.listener = (NetflixWebViewClientListener) activity;
     }
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
         logger.debug("shouldOverrideUrlLoading: {}", url);
 
-        if (url.startsWith("http://www.netflix.com/watch/")) {
+        if (url.contains("://www.netflix.com/watch/")) {
             logger.debug("Sending Watch request to Kodi: {}", url);
             JsonClientResponse result = sender.sendMovie(url);
 
@@ -41,5 +44,15 @@ public class NetflixWebViewClient extends WebViewClient {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        listener.onPageStart(url);
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        listener.onPageFinished(url);
     }
 }

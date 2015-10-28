@@ -26,7 +26,7 @@ public class MovieIdSender {
         };
 
         try {
-            return asyncTask.execute().get();
+            return asyncTask.execute(url).get();
         } catch (Exception e) {
             logger.error("Failed to execute", e);
             return new JsonClientResponse(e);

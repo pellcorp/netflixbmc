@@ -35,8 +35,7 @@ public class NetflixLogin {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
     public static final String LOGIN_URL = "https://signup.netflix.com/Login";
-    public static final String INDEX_URL = "https://netflix.com/browse/my-list";
-    
+
     private DefaultHttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
     private final HttpContext localContext = new BasicHttpContext();

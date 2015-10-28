@@ -20,7 +20,6 @@ public class KodiNetflixChecker {
 		CONNECT_EXCEPTION, MISSING_PLUGIN, NORMAL
 	}
 
-	public static final String PLUGIN_PROGRAM_CHROME_LAUNCHER = "plugin.program.chrome.launcher";
 	public static final String PLUGIN_VIDEO_NETFLIXBMC = "plugin.video.netflixbmc";
 
 	private final JsonClient client;
