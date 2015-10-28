@@ -18,12 +18,10 @@ public class NetflixWebViewClient extends WebViewClient {
 
     private final Activity activity;
     private final MovieIdSender sender;
-    private final NetflixWebViewClientListener listener;
 
     public NetflixWebViewClient(Activity activity, MovieIdSender sender) {
         this.activity = activity;
         this.sender = sender;
-        this.listener = (NetflixWebViewClientListener) activity;
     }
 
     @Override
@@ -44,15 +42,5 @@ public class NetflixWebViewClient extends WebViewClient {
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        listener.onPageStart(url);
-    }
-
-    @Override
-    public void onPageFinished(WebView view, String url) {
-        listener.onPageFinished(url);
     }
 }

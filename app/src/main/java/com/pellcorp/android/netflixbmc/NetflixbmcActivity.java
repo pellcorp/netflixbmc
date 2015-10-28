@@ -65,7 +65,7 @@ public class NetflixbmcActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.settings:
-			startActivity(new Intent(this, PreferenceFragment.class));
+			startActivity(new Intent(this, PreferenceActivity.class));
 			return true;
 		}
 		return false;

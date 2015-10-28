@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,11 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class NetflixWebViewActivity extends Activity implements NetflixWebViewClientListener {
+public class NetflixWebViewActivity extends Activity {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 	private WebView webView;
-    private ProgressDialog progressDialog;
 
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -34,40 +34,58 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
         Preferences preferences = new Preferences(this);
         if (preferences.isConfigured()) {
-            progressDialog = ProgressDialog.show(
-                    this, getString(R.string.logging_in), getString(R.string.please_wait));
-
             String username = preferences.getString(R.string.pref_netflix_username);
             String password = preferences.getString(R.string.pref_netflix_password);
-            NetflixLogin login = new NetflixLogin();
-            if (login.login(username, password)) {
-                //progressDialog.dismiss();
 
-                CookieSyncManager.createInstance(this);
-                CookieManager cookieManager = CookieManager.getInstance();
-                List<Cookie> cookies = login.getCookieStore().getCookies();
-                for (Cookie cookie : cookies) {
-                    String cookieString = cookie.getName() + "=" + cookie.getValue() + "; domain=" + cookie.getDomain();
-                    cookieManager.setCookie("netflix.com", cookieString);
-                    CookieSyncManager.getInstance().sync();
+            String url = preferences.getString(R.string.pref_host_url);
+            JsonClient jsonClient = new JsonClientImpl(url);
+
+            MovieIdSender sender = new MovieIdSender(jsonClient);
+            NetflixWebViewClient viewClient = new NetflixWebViewClient(this, sender);
+
+            webView = (WebView) findViewById(R.id.webView1);
+            webView.setWebViewClient(viewClient);
+            webView.getSettings().setJavaScriptEnabled(true);
+
+            AsyncTask<String, Void, Boolean> loadNetflixTask = new AsyncTask<String, Void, Boolean>() {
+                ProgressDialog asyncDialog = new ProgressDialog(NetflixWebViewActivity.this);
+
+                @Override
+                protected void onPreExecute() {
+                    asyncDialog.setMessage(getString(R.string.logging_in));
+                    asyncDialog.show();
+                    super.onPreExecute();
                 }
-                webView = (WebView) findViewById(R.id.webView1);
 
-                String url = preferences.getString(R.string.pref_host_url);
-                JsonClient jsonClient = new JsonClientImpl(url);
+                @Override
+                protected Boolean doInBackground(String... params) {
+                    NetflixLogin login = new NetflixLogin();
+                    String email = params[0];
+                    String password = params[1];
+                    if (login.login(email, password)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
 
-                MovieIdSender sender = new MovieIdSender(jsonClient);
-                webView.setWebViewClient(new NetflixWebViewClient(this, sender));
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.loadUrl("http://www.netflix.com");
+                @Override
+                protected void onPostExecute(Boolean result) {
+                    asyncDialog.dismiss();
 
-            } else {
-                progressDialog.dismiss();
+                    if (result) {
+                        webView.loadUrl("http://www.netflix.com");
+                    } else {
+                        Dialog dialog = ActivityUtils.createErrorDialog(
+                                NetflixWebViewActivity.this,
+                                getString(R.string.login_failed));
+                        dialog.show();
+                    }
+                    super.onPostExecute(result);
+                }
+            };
 
-                Dialog dialog = ActivityUtils.createErrorDialog(this,
-                        getString(R.string.login_failed));
-                dialog.show();
-            }
+            loadNetflixTask.execute(username, password);
         } else {
             Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(R.string.missing_connection_details));
             dialog.show();
@@ -99,21 +117,9 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings:
-                startActivity(new Intent(this, PreferenceFragment.class));
+                startActivity(new Intent(this, PreferenceActivity.class));
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public void onPageStart(String url) {
-
-    }
-
-    @Override
-    public void onPageFinished(String url) {
-        if (progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
     }
 }

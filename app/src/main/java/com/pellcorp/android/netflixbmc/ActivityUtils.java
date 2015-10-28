@@ -28,7 +28,7 @@ public class ActivityUtils {
                     public void onClick(DialogInterface dialog, int id) {
                         activity.startActivity(new Intent(
                                 activity,
-                                PreferenceFragment.class));
+                                PreferenceActivity.class));
                     }
                 });
         return builder.create();

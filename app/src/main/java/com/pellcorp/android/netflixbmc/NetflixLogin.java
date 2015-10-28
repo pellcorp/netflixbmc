@@ -1,16 +1,9 @@
 package com.pellcorp.android.netflixbmc;
 
-import android.os.AsyncTask;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -30,6 +23,10 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class NetflixLogin {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
@@ -39,7 +36,7 @@ public class NetflixLogin {
     private DefaultHttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
     private final HttpContext localContext = new BasicHttpContext();
-    
+
     public NetflixLogin() {
         HttpParams params = new BasicHttpParams();
         params.setParameter(AllClientPNames.USER_AGENT, USER_AGENT);
@@ -48,30 +45,12 @@ public class NetflixLogin {
         localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
         this.client.setCookieStore(cookieStore);
     }
-    
+
     public CookieStore getCookieStore() {
         return cookieStore;
     }
 
     public boolean login(String email, String password) {
-        AsyncTask<String, Integer, Boolean> loginTask = new AsyncTask<String, Integer, Boolean>() {
-            @Override
-            protected Boolean doInBackground(String ... params) {
-                String username = params[0];
-                String password = params[1];
-                return doLogin(username, password);
-            }
-        };
-
-        try {
-            return loginTask.execute(email, password).get();
-        } catch (Exception e) {
-            logger.error("Failed to login", e);
-            return false;
-        }
-    }
-
-    private boolean doLogin(String email, String password) {
         try {
             String authUrl = getAuthUrl();
 
