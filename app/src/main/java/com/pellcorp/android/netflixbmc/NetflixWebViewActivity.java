@@ -81,6 +81,7 @@ public class NetflixWebViewActivity extends Activity {
 
     private void postExecute(Boolean result) {
         if (result) {
+
             webView.loadUrl("http://www.netflix.com");
         } else {
             Dialog dialog = ActivityUtils.createErrorDialog(
@@ -92,7 +93,20 @@ public class NetflixWebViewActivity extends Activity {
 
     private boolean doLogin(String email, String password) {
         NetflixLogin login = new NetflixLogin();
-        return login.login(email, password);
+        if (login.login(email, password)) {
+            CookieSyncManager.createInstance(this);
+            CookieManager cookieManager = CookieManager.getInstance();
+            List<Cookie> cookies = login.getCookieStore().getCookies();
+
+            for (Cookie cookie : cookies) {
+                String cookieString = cookie.getName() + "=" + cookie.getValue() + "; domain=" + cookie.getDomain();
+                cookieManager.setCookie("netflix.com", cookieString);
+                CookieSyncManager.getInstance().sync();
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

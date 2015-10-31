@@ -1,5 +1,6 @@
 package com.pellcorp.android.netflixbmc;
 
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -41,14 +42,17 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
                         preference.setSummary(urlString);
                         return true;
                     } else if (status.equals(KodiNetflixCheckerStatus.MISSING_PLUGIN)) {
-                        ActivityUtils.createErrorDialog(getActivity(), "No netflixbmc plugin");
+                        Dialog dialog = ActivityUtils.createErrorDialog(getActivity(), "No netflixbmc plugin");
+                        dialog.show();
                         return false;
                     } else {
-                        ActivityUtils.createErrorDialog(getActivity(), "Kodi instance not accessible");
+                        Dialog dialog = ActivityUtils.createErrorDialog(getActivity(), "Kodi instance not accessible");
+                        dialog.show();
                         return false;
                     }
                 } catch (Exception e) {
-                    ActivityUtils.createErrorDialog(getActivity(), e.getMessage());
+                    Dialog dialog = ActivityUtils.createErrorDialog(getActivity(), e.getMessage());
+                    dialog.show();
                     return false;
                 }
             }
