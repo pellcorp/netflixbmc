@@ -32,6 +32,14 @@ public class NetflixWebViewActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.webview);
 
+        webView = (WebView) findViewById(R.id.webView1);
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 4.4.2; Android SDK built for x86 Build/KK) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36");
+
+        NetflixWebViewClient viewClient = new NetflixWebViewClient(this);
+        webView.setWebViewClient(viewClient);
+
         Preferences preferences = new Preferences(this);
         if (preferences.isConfigured()) {
             String username = preferences.getString(R.string.pref_netflix_username);
@@ -40,19 +48,19 @@ public class NetflixWebViewActivity extends Activity {
             String url = preferences.getString(R.string.pref_host_url);
             JsonClient jsonClient = new JsonClientImpl(url);
 
-            ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle(R.string.please_wait);
-            progressDialog.setMessage(getString(R.string.logging_in));
-            progressDialog.show();
-
             MovieIdSender sender = new MovieIdSender(jsonClient, this);
-            NetflixWebViewClient viewClient = new NetflixWebViewClient(progressDialog, sender);
-
-            webView = (WebView) findViewById(R.id.webView1);
-            webView.setWebViewClient(viewClient);
-            webView.getSettings().setJavaScriptEnabled(true);
+            viewClient.setSender(sender);
 
             AsyncTask<String, Void, Boolean> loadNetflixTask = new AsyncTask<String, Void, Boolean>() {
+                ProgressDialog progressDialog = new ProgressDialog(NetflixWebViewActivity.this);
+
+                @Override
+                protected void onPreExecute() {
+                    progressDialog.setTitle(R.string.please_wait);
+                    progressDialog.setMessage(getString(R.string.logging_in));
+                    progressDialog.show();
+                }
+
                 @Override
                 protected Boolean doInBackground(String... params) {
                     String email = params[0];
@@ -63,11 +71,14 @@ public class NetflixWebViewActivity extends Activity {
                 @Override
                 protected void onPostExecute(Boolean result) {
                     postExecute(result);
+                    progressDialog.dismiss();
                     super.onPostExecute(result);
                 }
             };
 
-            loadNetflixTask.execute(username, password);
+            if (savedInstanceState == null) {
+                loadNetflixTask.execute(username, password);
+            }
         } else {
             Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(R.string.missing_connection_details));
             dialog.show();
@@ -114,6 +125,18 @@ public class NetflixWebViewActivity extends Activity {
             Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(R.string.missing_connection_details));
             dialog.show();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        webView.saveState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        webView.restoreState(savedInstanceState);
     }
 
     @Override
