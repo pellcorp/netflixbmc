@@ -29,7 +29,7 @@ public class JsonClientResponse {
 		this.success = false;
 		this.cause = cause;
 		this.object = null;
-		this.error = null;
+		this.error = cause.getMessage();
 	}
 
 	public JSONObject getResponse() {
