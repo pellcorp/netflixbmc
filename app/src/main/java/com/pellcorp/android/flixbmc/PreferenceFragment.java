@@ -1,19 +1,17 @@
-package com.pellcorp.android.netflixbmc;
+package com.pellcorp.android.flixbmc;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
-import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceGroup;
 import android.widget.Toast;
 
-import com.pellcorp.android.netflixbmc.jsonrpc.JsonClient;
-import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientImpl;
-import com.pellcorp.android.netflixbmc.jsonrpc.KodiNetflixChecker;
-import com.pellcorp.android.netflixbmc.jsonrpc.KodiNetflixChecker.KodiNetflixCheckerStatus;
+import com.pellcorp.android.flixbmc.jsonrpc.KodiNetflixChecker;
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
 
 public class PreferenceFragment extends android.preference.PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 	public PreferenceFragment() {
@@ -23,11 +21,11 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		addPreferencesFromResource(R.xml.settings);
+		addPreferencesFromResource(com.pellcorp.android.netflixbmc.R.xml.settings);
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         initSummary(getPreferenceScreen());
 
-        EditTextPreference urlPref = (EditTextPreference) findPreference(getString(R.string.pref_host_url));
+        EditTextPreference urlPref = (EditTextPreference) findPreference(getString(com.pellcorp.android.netflixbmc.R.string.pref_host_url));
 
 		urlPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
@@ -36,12 +34,12 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
                 try {
                     JsonClient jsonClient = new JsonClientImpl(urlString);
                     KodiNetflixChecker checker = new KodiNetflixChecker(jsonClient);
-                    KodiNetflixCheckerStatus status = checker.check();
-                    if (status.equals(KodiNetflixCheckerStatus.NORMAL)) {
-                        Toast.makeText(getActivity(), R.string.kodi_url_config_is_valid, Toast.LENGTH_SHORT).show();
+                    KodiNetflixChecker.KodiNetflixCheckerStatus status = checker.check();
+                    if (status.equals(KodiNetflixChecker.KodiNetflixCheckerStatus.NORMAL)) {
+                        Toast.makeText(getActivity(), com.pellcorp.android.netflixbmc.R.string.kodi_url_config_is_valid, Toast.LENGTH_SHORT).show();
                         preference.setSummary(urlString);
                         return true;
-                    } else if (status.equals(KodiNetflixCheckerStatus.MISSING_PLUGIN)) {
+                    } else if (status.equals(KodiNetflixChecker.KodiNetflixCheckerStatus.MISSING_PLUGIN)) {
                         Dialog dialog = ActivityUtils.createErrorDialog(getActivity(), "No netflixbmc plugin");
                         dialog.show();
                         return false;

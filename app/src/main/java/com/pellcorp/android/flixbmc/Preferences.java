@@ -1,4 +1,4 @@
-package com.pellcorp.android.netflixbmc;
+package com.pellcorp.android.flixbmc;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,9 +17,9 @@ public class Preferences {
     }
 
     public boolean isConfigured() {
-        return getString(R.string.pref_host_url) != null
-                && getString(R.string.pref_netflix_username) != null
-                && getString(R.string.pref_netflix_password) != null;
+        return getString(com.pellcorp.android.netflixbmc.R.string.pref_host_url) != null
+                && getString(com.pellcorp.android.netflixbmc.R.string.pref_netflix_username) != null
+                && getString(com.pellcorp.android.netflixbmc.R.string.pref_netflix_password) != null;
     }
 
     public String getString(int resId) {

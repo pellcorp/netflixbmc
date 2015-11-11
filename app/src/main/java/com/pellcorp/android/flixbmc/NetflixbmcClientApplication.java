@@ -1,4 +1,4 @@
-package com.pellcorp.android.netflixbmc;
+package com.pellcorp.android.flixbmc;
 
 import android.app.Application;
 

@@ -1,18 +1,13 @@
-package com.pellcorp.android.netflixbmc;
+package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.view.View;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientResponse;
-import com.pellcorp.android.netflixbmc.jsonrpc.MovieIdSender;
+import com.pellcorp.android.flixbmc.jsonrpc.MovieIdSender;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +74,7 @@ public class NetflixWebViewClient extends WebViewClient {
             progressDialog.show();
         }
 
-        progressDialog.setMessage(progressDialog.getContext().getString(R.string.loading));
+        progressDialog.setMessage(progressDialog.getContext().getString(com.pellcorp.android.netflixbmc.R.string.loading));
 
         super.onPageStarted(view, url, favicon);
     }

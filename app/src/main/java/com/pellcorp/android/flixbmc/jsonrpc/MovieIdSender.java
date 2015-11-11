@@ -1,11 +1,11 @@
-package com.pellcorp.android.netflixbmc.jsonrpc;
+package com.pellcorp.android.flixbmc.jsonrpc;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.pellcorp.android.netflixbmc.ActivityUtils;
+import com.pellcorp.android.flixbmc.ActivityUtils;
 import com.pellcorp.android.netflixbmc.R;
 
 import java.util.HashMap;

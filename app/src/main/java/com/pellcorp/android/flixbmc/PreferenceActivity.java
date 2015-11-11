@@ -1,9 +1,7 @@
-package com.pellcorp.android.netflixbmc;
+package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
 import android.os.Bundle;
-
-import java.util.List;
 
 public class PreferenceActivity extends Activity {
     @Override

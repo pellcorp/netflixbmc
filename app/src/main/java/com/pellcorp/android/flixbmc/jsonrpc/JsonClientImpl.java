@@ -1,4 +1,4 @@
-package com.pellcorp.android.netflixbmc.jsonrpc;
+package com.pellcorp.android.flixbmc.jsonrpc;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pellcorp.android.netflixbmc.R;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Request;
 import com.thetransactioncompany.jsonrpc2.JSONRPC2Response;
 import com.thetransactioncompany.jsonrpc2.client.JSONRPC2Session;

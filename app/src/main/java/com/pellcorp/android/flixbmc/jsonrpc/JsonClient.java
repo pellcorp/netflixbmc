@@ -1,4 +1,4 @@
-package com.pellcorp.android.netflixbmc.jsonrpc;
+package com.pellcorp.android.flixbmc.jsonrpc;
 
 import java.util.Map;
 
