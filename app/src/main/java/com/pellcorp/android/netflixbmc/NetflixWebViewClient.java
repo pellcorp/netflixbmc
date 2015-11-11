@@ -30,17 +30,15 @@ public class NetflixWebViewClient extends WebViewClient {
 
         if (url.contains("://www.netflix.com/watch/")) {
             logger.debug("Sending Watch request to Kodi: {}", url);
-            JsonClientResponse result = sender.sendMovie(url);
-
-            if (result.isSuccess()) {
-                Toast.makeText(activity, R.string.successful_submission, Toast.LENGTH_SHORT).show();
-            } else if (result.isError()) {
-                Dialog dialog = ActivityUtils.createErrorDialog(activity, result.getErrorMessage());
-                dialog.show();
-            }
+            sender.sendMovie(url);
             return true;
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void onLoadResource(WebView view, String url) {
+        super.onLoadResource(view, url);
     }
 }

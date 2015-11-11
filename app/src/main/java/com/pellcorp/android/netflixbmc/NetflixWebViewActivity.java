@@ -40,7 +40,7 @@ public class NetflixWebViewActivity extends Activity {
             String url = preferences.getString(R.string.pref_host_url);
             JsonClient jsonClient = new JsonClientImpl(url);
 
-            MovieIdSender sender = new MovieIdSender(jsonClient);
+            MovieIdSender sender = new MovieIdSender(jsonClient, this);
             NetflixWebViewClient viewClient = new NetflixWebViewClient(this, sender);
 
             webView = (WebView) findViewById(R.id.webView1);
@@ -66,8 +66,9 @@ public class NetflixWebViewActivity extends Activity {
 
                 @Override
                 protected void onPostExecute(Boolean result) {
-                    asyncDialog.dismiss();
+                    asyncDialog.setMessage(getString(R.string.please_wait));
                     postExecute(result);
+                    asyncDialog.dismiss();
                     super.onPostExecute(result);
                 }
             };

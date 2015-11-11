@@ -35,7 +35,7 @@ public class NetflixbmcActivity extends Activity {
                 String url = preferences.getString(R.string.pref_host_url);
 				JsonClient jsonClient = new JsonClientImpl(url);
 
-                MovieIdSender task = new MovieIdSender(jsonClient);
+                MovieIdSender task = new MovieIdSender(jsonClient, this);
 				JsonClientResponse result = task.sendMovie(url);
 				
 				if (result.isSuccess()) {

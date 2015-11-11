@@ -1,6 +1,12 @@
 package com.pellcorp.android.netflixbmc.jsonrpc;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.os.AsyncTask;
+import android.widget.Toast;
+
+import com.pellcorp.android.netflixbmc.ActivityUtils;
+import com.pellcorp.android.netflixbmc.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,17 +17,35 @@ import org.slf4j.LoggerFactory;
 public class MovieIdSender {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	private final JsonClient client;
-	
-	public MovieIdSender(JsonClient client) {
+	private final Activity activity;
+
+	public MovieIdSender(JsonClient client, final Activity activity) {
 		this.client = client;
+        this.activity = activity;
 	}
 	
 	//http://www.netflix.com/watch/70259443?trackId=13462050&tctx=1%2C0%2C48d00020-b7c9-46ea-ae58-219011a2ed29-16193513
 	public JsonClientResponse sendMovie(String url) {
         AsyncTask<String, Integer, JsonClientResponse> asyncTask = new AsyncTask<String, Integer, JsonClientResponse>() {
             @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
             protected JsonClientResponse doInBackground(String ... params) {
                 return doSendMovie(params[0]);
+            }
+
+            @Override
+            protected void onPostExecute(JsonClientResponse result) {
+                if (result.isSuccess()) {
+                    Toast.makeText(activity, R.string.successful_submission, Toast.LENGTH_SHORT).show();
+                } else if (result.isError()) {
+                    Dialog dialog = ActivityUtils.createErrorDialog(activity, result.getErrorMessage());
+                    dialog.show();
+                }
+                super.onPostExecute(result);
             }
         };
 
