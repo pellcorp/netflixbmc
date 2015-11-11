@@ -2,9 +2,12 @@ package com.pellcorp.android.netflixbmc;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.pellcorp.android.netflixbmc.jsonrpc.JsonClientResponse;
@@ -16,11 +19,11 @@ import org.slf4j.LoggerFactory;
 public class NetflixWebViewClient extends WebViewClient {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    private final Activity activity;
     private final MovieIdSender sender;
+    private final ProgressDialog progressDialog;
 
-    public NetflixWebViewClient(Activity activity, MovieIdSender sender) {
-        this.activity = activity;
+    public NetflixWebViewClient(ProgressDialog progressDialog, MovieIdSender sender) {
+        this.progressDialog = progressDialog;
         this.sender = sender;
     }
 
@@ -33,12 +36,32 @@ public class NetflixWebViewClient extends WebViewClient {
             sender.sendMovie(url);
             return true;
         } else {
-            return false;
+            view.loadUrl(url);
+            return true;
         }
     }
 
     @Override
     public void onLoadResource(WebView view, String url) {
-        super.onLoadResource(view, url);
+        if (url.contains("://www.netflix.com/")) {
+            super.onLoadResource(view, url);
+        } else {
+            super.onLoadResource(view, url);
+        }
+    }
+
+    @Override
+    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+        progressDialog.setMessage(progressDialog.getContext().getString(R.string.loading));
+        super.onPageStarted(view, url, favicon);
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }

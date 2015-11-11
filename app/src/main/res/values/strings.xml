@@ -29,5 +29,6 @@
     <string name="kodi_url_config_is_valid">Kodi RPC Url Configuration is valid</string>
 
     <string name="logging_in">Logging in...</string>
+    <string name="loading">Loading...</string>
     <string name="please_wait">Please wait...</string>
 </resources>

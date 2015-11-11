@@ -40,23 +40,19 @@ public class NetflixWebViewActivity extends Activity {
             String url = preferences.getString(R.string.pref_host_url);
             JsonClient jsonClient = new JsonClientImpl(url);
 
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle(R.string.please_wait);
+            progressDialog.setMessage(getString(R.string.logging_in));
+            progressDialog.show();
+
             MovieIdSender sender = new MovieIdSender(jsonClient, this);
-            NetflixWebViewClient viewClient = new NetflixWebViewClient(this, sender);
+            NetflixWebViewClient viewClient = new NetflixWebViewClient(progressDialog, sender);
 
             webView = (WebView) findViewById(R.id.webView1);
             webView.setWebViewClient(viewClient);
             webView.getSettings().setJavaScriptEnabled(true);
 
             AsyncTask<String, Void, Boolean> loadNetflixTask = new AsyncTask<String, Void, Boolean>() {
-                ProgressDialog asyncDialog = new ProgressDialog(NetflixWebViewActivity.this);
-
-                @Override
-                protected void onPreExecute() {
-                    asyncDialog.setMessage(getString(R.string.logging_in));
-                    asyncDialog.show();
-                    super.onPreExecute();
-                }
-
                 @Override
                 protected Boolean doInBackground(String... params) {
                     String email = params[0];
@@ -66,9 +62,7 @@ public class NetflixWebViewActivity extends Activity {
 
                 @Override
                 protected void onPostExecute(Boolean result) {
-                    asyncDialog.setMessage(getString(R.string.please_wait));
                     postExecute(result);
-                    asyncDialog.dismiss();
                     super.onPostExecute(result);
                 }
             };
@@ -82,7 +76,6 @@ public class NetflixWebViewActivity extends Activity {
 
     private void postExecute(Boolean result) {
         if (result) {
-
             webView.loadUrl("http://www.netflix.com");
         } else {
             Dialog dialog = ActivityUtils.createErrorDialog(
