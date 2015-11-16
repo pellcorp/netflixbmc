@@ -30,8 +30,7 @@ import java.util.List;
 public class NetflixLogin {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
-    public static final String LOGIN_URL = "https://signup.netflix.com/Login";
+    public static final String LOGIN_URL = "https://www.netflix.com/Login";
 
     private DefaultHttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
@@ -39,7 +38,7 @@ public class NetflixLogin {
 
     public NetflixLogin() {
         HttpParams params = new BasicHttpParams();
-        params.setParameter(AllClientPNames.USER_AGENT, USER_AGENT);
+        params.setParameter(AllClientPNames.USER_AGENT, UserAgents.Mobile);
         this.client = new DefaultHttpClient(params);
 
         localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
@@ -84,14 +83,25 @@ public class NetflixLogin {
         }
     }
 
-    private String getAuthUrl() throws ParseException, IOException {
-        HttpGet get = new HttpGet(LOGIN_URL);
-        HttpResponse response = client.execute(get, localContext);
-        String html = EntityUtils.toString(response.getEntity());
-        
-        Document doc = Jsoup.parse(html, LOGIN_URL);
-        Elements elements = doc.getElementsByAttributeValue("name", "authURL");
-        String authUrl = elements.first().attr("value");
+    private String getAuthUrl() throws ParseException, IOException, InterruptedException {
+        Elements elements = null;
+        String authUrl = null;
+
+        //Netflix sometimes sends "BLOCKED", just try again
+        do
+        {
+            HttpGet get = new HttpGet(LOGIN_URL);
+            HttpResponse response = client.execute(get, localContext);
+            String html = EntityUtils.toString(response.getEntity());
+
+            Document doc = Jsoup.parse(html, LOGIN_URL);
+            elements = doc.getElementsByAttributeValue("name", "authURL");
+            if(elements != null && elements.size() > 0)
+                authUrl = elements.first().attr("value");
+            else
+                Thread.sleep(1000);
+        }
+        while(elements == null || elements.size() == 0);
         return authUrl;
     }
 }

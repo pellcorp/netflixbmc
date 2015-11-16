@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.pellcorp.android.flixbmc.ActivityUtils;
-import com.pellcorp.android.netflixbmc.R;
+import com.pellcorp.android.flixbmc.R;
 
 import java.util.HashMap;
 import java.util.Map;
