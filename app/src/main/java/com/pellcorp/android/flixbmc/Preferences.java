@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-/**
- * Created by jason on 20/10/15.
- */
 public class Preferences {
     private Context ctx;
     private SharedPreferences preferences;
@@ -14,12 +11,6 @@ public class Preferences {
     public Preferences(Context ctx) {
         this.ctx = ctx;
         this.preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-    }
-
-    public boolean isConfigured() {
-        return getString(com.pellcorp.android.netflixbmc.R.string.pref_host_url) != null
-                && getString(com.pellcorp.android.netflixbmc.R.string.pref_netflix_username) != null
-                && getString(com.pellcorp.android.netflixbmc.R.string.pref_netflix_password) != null;
     }
 
     public String getString(int resId) {

@@ -1,6 +1,7 @@
 package com.pellcorp.android.flixbmc;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -21,11 +22,11 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		addPreferencesFromResource(com.pellcorp.android.netflixbmc.R.xml.settings);
+		addPreferencesFromResource(R.xml.settings);
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         initSummary(getPreferenceScreen());
 
-        EditTextPreference urlPref = (EditTextPreference) findPreference(getString(com.pellcorp.android.netflixbmc.R.string.pref_host_url));
+        EditTextPreference urlPref = (EditTextPreference) findPreference(getString(com.pellcorp.android.flixbmc.R.string.pref_host_url));
 
 		urlPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
@@ -36,7 +37,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
                     KodiNetflixChecker checker = new KodiNetflixChecker(jsonClient);
                     KodiNetflixChecker.KodiNetflixCheckerStatus status = checker.check();
                     if (status.equals(KodiNetflixChecker.KodiNetflixCheckerStatus.NORMAL)) {
-                        Toast.makeText(getActivity(), com.pellcorp.android.netflixbmc.R.string.kodi_url_config_is_valid, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.kodi_url_config_is_valid, Toast.LENGTH_SHORT).show();
                         preference.setSummary(urlString);
                         return true;
                     } else if (status.equals(KodiNetflixChecker.KodiNetflixCheckerStatus.MISSING_PLUGIN)) {

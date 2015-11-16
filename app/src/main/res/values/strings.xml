@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Netflixbmc Client</string>
+    <string name="app_name">*Flixbmc Client</string>
     
-    <string name="settings_label">Kodi RPC Settings</string>
+    <string name="settings_label">Settings</string>
     <string name="settings_shortcut">s</string>
     
     <string name="pref_url_title">Url</string>
@@ -18,15 +18,16 @@
     <string name="pref_netflix_username">username</string>
     <string name="pref_netflix_password">password</string>
 
-    <string name="missing_connection_details">Missing Rpc Details</string>
+    <string name="missing_netflix_credentials">Missing Netflix Credentials</string>
+    <string name="missing_kodi_connection_settings">Missing Kodi Connection Settings</string>
     
     <string name="successful_submission">Successful Submission</string>
 
     <string name="login_failed">Login failed</string>
 
-    <string name="checking_kodi_url">Checking Kodi RPC Url Configuration</string>
+    <string name="checking_kodi_url">Checking Kodi Url Configuration</string>
 
-    <string name="kodi_url_config_is_valid">Kodi RPC Url Configuration is valid</string>
+    <string name="kodi_url_config_is_valid">Kodi Url Configuration is valid</string>
 
     <string name="logging_in">Logging in...</string>
     <string name="loading">Loading...</string>

@@ -23,7 +23,7 @@ public class ActivityUtils {
         builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
 
-        builder.setPositiveButton(com.pellcorp.android.netflixbmc.R.string.settings_label,
+        builder.setPositiveButton(com.pellcorp.android.flixbmc.R.string.settings_label,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         activity.startActivity(new Intent(

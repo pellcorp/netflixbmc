@@ -2,6 +2,7 @@ package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -15,15 +16,10 @@ import org.slf4j.LoggerFactory;
 public class NetflixWebViewClient extends WebViewClient {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    private MovieIdSender sender;
     private final ProgressDialog progressDialog;
 
     public NetflixWebViewClient(Activity activity) {
         this.progressDialog = new ProgressDialog(activity);
-    }
-
-    public void setSender(MovieIdSender sender) {
-        this.sender = sender;
     }
 
     @Override
@@ -43,11 +39,11 @@ public class NetflixWebViewClient extends WebViewClient {
 
         if (url.contains("://www.netflix.com/watch/")) {
             logger.debug("Sending Watch request to Kodi: {}", url);
-            if (sender != null) {
-                sender.sendMovie(url);
-            } else {
-                logger.error("No sender registered");
-            }
+
+            Intent sendToKodi = new Intent(progressDialog.getContext(), SendToKodiActivity.class);
+            sendToKodi.putExtra(SendToKodiActivity.NETFLIX_URL, url);
+            sendToKodi.setAction(SendToKodiActivity.SEND_TO_KODI);
+            progressDialog.getContext().startActivity(sendToKodi);
             return true;
         } else {
             view.loadUrl(url);
@@ -74,7 +70,7 @@ public class NetflixWebViewClient extends WebViewClient {
             progressDialog.show();
         }
 
-        progressDialog.setMessage(progressDialog.getContext().getString(com.pellcorp.android.netflixbmc.R.string.loading));
+        progressDialog.setMessage(progressDialog.getContext().getString(R.string.loading));
 
         super.onPageStarted(view, url, favicon);
     }
