@@ -29,7 +29,7 @@ public class NetflixWebViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        this.pausedState = savedInstanceState;
+        webView.restoreState(savedInstanceState);
 
 		setContentView(R.layout.webview);
 
@@ -89,9 +89,9 @@ public class NetflixWebViewActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        if (pausedState != null) {
-            webView.restoreState(pausedState);
-        } else {
+        // we do not want to trigger a reload of the web view when we send out the SendToKodiActivity,
+        // not sure how to handle that.
+        if (pausedState == null) {
             Preferences preferences = new Preferences(this);
             String username = preferences.getString(R.string.pref_netflix_username);
             String password = preferences.getString(R.string.pref_netflix_password);
