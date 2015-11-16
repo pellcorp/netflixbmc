@@ -49,7 +49,7 @@ public class NetflixLogin {
         return cookieStore;
     }
 
-    public boolean login(String email, String password) {
+    public LoginState login(String email, String password) {
         try {
             String authUrl = getAuthUrl();
 
@@ -66,20 +66,20 @@ public class NetflixLogin {
 
             HttpResponse response = client.execute(post, localContext);
             if (response.getStatusLine().getStatusCode() == 302) {
-                return true;
+                return new LoginState(true, null);
             } else {
                 String html = EntityUtils.toString(response.getEntity());
                 Document doc = Jsoup.parse(html, LOGIN_URL);
                 Elements elements = doc.getElementsByAttributeValue("id", "page-LOGIN");
                 if (elements.size() > 0) {
-                    return false;
+                    return new LoginState(false, "Login response page missing");
                 } else {
-                    return true;
+                    return new LoginState(true, null);
                 }
             }
         } catch (Exception e) {
             logger.error("Failed to login", e);
-            return false;
+            return new LoginState(false, e.getMessage());
         }
     }
 

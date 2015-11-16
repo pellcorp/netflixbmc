@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pellcorp.android.flixbmc"
-    android:versionCode="7"
-    android:versionName="0.0.7" >
+    android:versionCode="1"
+    android:versionName="0.0.1" >
 
     <uses-sdk
         android:minSdkVersion="18"
@@ -11,23 +10,45 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
-        android:name=".NetflixbmcClientApplication"
+        android:name=".FlixbmcClientApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
-
         <activity
             android:name=".NetflixWebViewActivity"
-            android:label="@string/app_name">
-
-            <intent-filter >
+            android:label="@string/app_name" >
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".SendToKodiActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="com.pellcorp.android.action.SEND_TO_KODI" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".PreferenceActivity"
             android:label="@string/app_name" />
+
     </application>
+
 </manifest>

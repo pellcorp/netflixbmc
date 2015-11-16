@@ -42,7 +42,10 @@ public class MovieIdSender {
                 if (result.isSuccess()) {
                     Toast.makeText(activity, R.string.successful_submission, Toast.LENGTH_SHORT).show();
                 } else if (result.isError()) {
-                    Dialog dialog = ActivityUtils.createErrorDialog(activity, result.getErrorMessage());
+                    Dialog dialog = ActivityUtils.createErrorDialog(activity,
+                            activity.getString(R.string.unexpected_error),
+                            result.getErrorMessage(),
+                            false);
                     dialog.show();
                 }
                 super.onPostExecute(result);
