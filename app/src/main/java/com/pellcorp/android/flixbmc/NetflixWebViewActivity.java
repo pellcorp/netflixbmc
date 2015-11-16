@@ -42,9 +42,10 @@ public class NetflixWebViewActivity extends Activity {
         webView.setWebViewClient(viewClient);
 	}
 
-    private boolean doLogin(String email, String password) {
+    private LoginState doLogin(String email, String password) {
         NetflixLogin login = new NetflixLogin();
-        if (login.login(email, password)) {
+        LoginState state = login.login(email, password);
+        if (state.isSuccessful()) {
             CookieSyncManager.createInstance(this);
             CookieManager cookieManager = CookieManager.getInstance();
             List<Cookie> cookies = login.getCookieStore().getCookies();
@@ -54,9 +55,9 @@ public class NetflixWebViewActivity extends Activity {
                 cookieManager.setCookie("netflix.com", cookieString);
                 CookieSyncManager.getInstance().sync();
             }
-            return true;
+            return state;
         } else {
-            return false;
+            return state;
         }
     }
 
@@ -96,7 +97,7 @@ public class NetflixWebViewActivity extends Activity {
             String password = preferences.getString(R.string.pref_netflix_password);
 
             if (username != null && password != null) {
-                AsyncTask<String, Void, Boolean> loadNetflixTask = new AsyncTask<String, Void, Boolean>() {
+                AsyncTask<String, Void, LoginState> loadNetflixTask = new AsyncTask<String, Void, LoginState>() {
                     ProgressDialog progressDialog = new ProgressDialog(NetflixWebViewActivity.this);
 
                     @Override
@@ -106,14 +107,14 @@ public class NetflixWebViewActivity extends Activity {
                     }
 
                     @Override
-                    protected Boolean doInBackground(String... params) {
+                    protected LoginState doInBackground(String... params) {
                         String email = params[0];
                         String password = params[1];
                         return doLogin(email, password);
                     }
 
                     @Override
-                    protected void onPostExecute(Boolean result) {
+                    protected void onPostExecute(LoginState result) {
                         postExecute(result);
                         progressDialog.dismiss();
                         super.onPostExecute(result);
@@ -129,13 +130,15 @@ public class NetflixWebViewActivity extends Activity {
         }
     }
 
-    private void postExecute(Boolean result) {
-        if (result) {
+    private void postExecute(LoginState result) {
+        if (result.isSuccessful()) {
             webView.loadUrl("http://www.netflix.com");
         } else {
             Dialog dialog = ActivityUtils.createErrorDialog(
                     this,
-                    getString(R.string.login_failed), false);
+                    getString(R.string.login_failed),
+                    result.getFailureReason(),
+                    false);
             dialog.show();
         }
     }

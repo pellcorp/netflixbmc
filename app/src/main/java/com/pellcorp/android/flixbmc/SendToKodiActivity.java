@@ -45,6 +45,7 @@ public class SendToKodiActivity extends Activity {
             } else {
                 Dialog dialog = ActivityUtils.createErrorDialog(
                         this,
+                        getString(R.string.url_not_supported),
                         getString(R.string.netflix_title_url_not_supported),
                         true);
                 dialog.show();

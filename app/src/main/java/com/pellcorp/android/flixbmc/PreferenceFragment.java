@@ -41,16 +41,22 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
                         preference.setSummary(urlString);
                         return true;
                     } else if (status.equals(KodiNetflixChecker.KodiNetflixCheckerStatus.MISSING_PLUGIN)) {
-                        Dialog dialog = ActivityUtils.createErrorDialog(getActivity(), "No netflixbmc plugin", false);
+                        Dialog dialog = ActivityUtils.createErrorDialog(getActivity(),
+                                getString(R.string.invalid_kodi_settings),
+                                "No netflixbmc plugin", false);
                         dialog.show();
                         return false;
                     } else {
-                        Dialog dialog = ActivityUtils.createErrorDialog(getActivity(), "Kodi instance not accessible", false);
+                        Dialog dialog = ActivityUtils.createErrorDialog(getActivity(),
+                                getString(R.string.invalid_kodi_settings),
+                                "Kodi instance not accessible", false);
                         dialog.show();
                         return false;
                     }
                 } catch (Exception e) {
-                    Dialog dialog = ActivityUtils.createErrorDialog(getActivity(), e.getMessage(), false);
+                    Dialog dialog = ActivityUtils.createErrorDialog(getActivity(),
+                            getString(R.string.invalid_kodi_settings),
+                            e.getMessage(), false);
                     dialog.show();
                     return false;
                 }

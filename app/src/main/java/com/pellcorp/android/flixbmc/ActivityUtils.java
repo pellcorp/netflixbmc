@@ -7,9 +7,10 @@ import android.content.Intent;
 
 public class ActivityUtils {
 
-    public static AlertDialog createErrorDialog(final Activity activity, String message, final boolean doFinish) {
+    public static AlertDialog createErrorDialog(final Activity activity, String title, String message, final boolean doFinish) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
+        builder.setTitle(title);
         builder.setPositiveButton(android.R.string.ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
