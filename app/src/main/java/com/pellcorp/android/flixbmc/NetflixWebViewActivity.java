@@ -31,9 +31,6 @@ public class NetflixWebViewActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null)
-            webView.restoreState(savedInstanceState);
-
 		setContentView(R.layout.webview);
 
         webView = (WebView) findViewById(R.id.webView1);
@@ -53,6 +50,9 @@ public class NetflixWebViewActivity extends Activity {
 
         Preferences preferences = new Preferences(this);
         preferences.registerOnPreferenceChangeListener(preferenceChangeListener);
+
+        if(savedInstanceState != null)
+            webView.restoreState(savedInstanceState);
 	}
 
     private LoginState doLogin(String email, String password) {
