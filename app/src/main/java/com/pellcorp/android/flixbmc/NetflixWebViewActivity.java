@@ -123,7 +123,7 @@ public class NetflixWebViewActivity extends Activity {
                 loadNetflixTask.execute(username, password);
             } else {
                 Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
-                        getString(R.string.missing_netflix_credentials));
+                        getString(R.string.missing_netflix_credentials), false);
                 dialog.show();
             }
         }
@@ -135,7 +135,7 @@ public class NetflixWebViewActivity extends Activity {
         } else {
             Dialog dialog = ActivityUtils.createErrorDialog(
                     this,
-                    getString(R.string.login_failed));
+                    getString(R.string.login_failed), false);
             dialog.show();
         }
     }

@@ -25,6 +25,8 @@
 
     <string name="login_failed">Login failed</string>
 
+    <string name="netflix_title_url_not_supported">Netflix Title Url not supported</string>
+
     <string name="checking_kodi_url">Checking Kodi Url Configuration</string>
 
     <string name="kodi_url_config_is_valid">Kodi Url Configuration is valid</string>

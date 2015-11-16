@@ -17,8 +17,10 @@ public class NetflixWebViewClient extends WebViewClient {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final ProgressDialog progressDialog;
+    private final Activity activity;
 
     public NetflixWebViewClient(Activity activity) {
+        this.activity = activity;
         this.progressDialog = new ProgressDialog(activity);
     }
 
@@ -40,10 +42,10 @@ public class NetflixWebViewClient extends WebViewClient {
         if (url.contains("://www.netflix.com/watch/")) {
             logger.debug("Sending Watch request to Kodi: {}", url);
 
-            Intent sendToKodi = new Intent(progressDialog.getContext(), SendToKodiActivity.class);
+            Intent sendToKodi = new Intent(activity, SendToKodiActivity.class);
             sendToKodi.putExtra(SendToKodiActivity.NETFLIX_URL, url);
             sendToKodi.setAction(SendToKodiActivity.SEND_TO_KODI);
-            progressDialog.getContext().startActivity(sendToKodi);
+            activity.startActivity(sendToKodi);
             return true;
         } else {
             view.loadUrl(url);
