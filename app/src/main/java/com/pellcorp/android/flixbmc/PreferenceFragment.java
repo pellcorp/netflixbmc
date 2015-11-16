@@ -29,7 +29,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        updatePreference(findPreference(key));
+        updatePreference(findPreference(key) );
     }
 
     private void initSummary(Preference p) {

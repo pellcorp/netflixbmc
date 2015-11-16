@@ -47,6 +47,14 @@
 
     <string name="kodi_url_config_is_valid">Kodi Url Configuration is valid</string>
 
+    <string name="netflix_wrong_credentials_html"><![CDATA[
+        <html>
+            <body>
+                <p>Failed to login to Netflix. Please check your settings</p>
+            </body>
+        </html>
+     ]]></string>
+
     <string name="logging_in">Logging in...</string>
     <string name="loading">Loading...</string>
     <string name="please_wait">Please wait...</string>
