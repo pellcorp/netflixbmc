@@ -30,23 +30,25 @@ public class NetflixWebViewActivity extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(com.pellcorp.android.netflixbmc.R.layout.webview);
+		setContentView(R.layout.webview);
 
-        webView = (WebView) findViewById(com.pellcorp.android.netflixbmc.R.id.webView1);
+        webView = (WebView) findViewById(R.id.webView1);
 
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setUserAgentString("Mozilla/5.0 (Linux; Android 4.4.2; Android SDK built for x86 Build/KK) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36");
+        webView.getSettings().setUserAgentString(UserAgents.Mobile);
 
         NetflixWebViewClient viewClient = new NetflixWebViewClient(this);
         webView.setWebViewClient(viewClient);
 
         Preferences preferences = new Preferences(this);
         if (preferences.isConfigured()) {
-            String username = preferences.getString(com.pellcorp.android.netflixbmc.R.string.pref_netflix_username);
-            String password = preferences.getString(com.pellcorp.android.netflixbmc.R.string.pref_netflix_password);
+            String username = preferences.getString(R.string.pref_netflix_username);
+            String password = preferences.getString(R.string.pref_netflix_password);
 
-            String url = preferences.getString(com.pellcorp.android.netflixbmc.R.string.pref_host_url);
-            JsonClient jsonClient = new JsonClientImpl(url);
+            String url = preferences.getString(R.string.pref_host_url);
+            String kodi_username = preferences.getString(R.string.pref_kodi_username);
+            String kodi_password = preferences.getString(R.string.pref_kodi_password);
+            JsonClient jsonClient = new JsonClientImpl(url, kodi_username, kodi_password);
 
             MovieIdSender sender = new MovieIdSender(jsonClient, this);
             viewClient.setSender(sender);
@@ -56,8 +58,8 @@ public class NetflixWebViewActivity extends Activity {
 
                 @Override
                 protected void onPreExecute() {
-                    progressDialog.setTitle(com.pellcorp.android.netflixbmc.R.string.please_wait);
-                    progressDialog.setMessage(getString(com.pellcorp.android.netflixbmc.R.string.logging_in));
+                    progressDialog.setTitle(R.string.please_wait);
+                    progressDialog.setMessage(getString(R.string.logging_in));
                     progressDialog.show();
                 }
 
@@ -80,7 +82,7 @@ public class NetflixWebViewActivity extends Activity {
                 loadNetflixTask.execute(username, password);
             }
         } else {
-            Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(com.pellcorp.android.netflixbmc.R.string.missing_connection_details));
+            Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(R.string.missing_connection_details));
             dialog.show();
         }
 	}
@@ -91,7 +93,7 @@ public class NetflixWebViewActivity extends Activity {
         } else {
             Dialog dialog = ActivityUtils.createErrorDialog(
                     this,
-                    getString(com.pellcorp.android.netflixbmc.R.string.login_failed));
+                    getString(R.string.login_failed));
             dialog.show();
         }
     }
@@ -122,7 +124,7 @@ public class NetflixWebViewActivity extends Activity {
 
         Preferences preferences = new Preferences(this);
         if (!preferences.isConfigured()) {
-            Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(com.pellcorp.android.netflixbmc.R.string.missing_connection_details));
+            Dialog dialog = ActivityUtils.createSettingsMissingDialog(this, getString(R.string.missing_connection_details));
             dialog.show();
         }
     }
@@ -143,14 +145,14 @@ public class NetflixWebViewActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(com.pellcorp.android.netflixbmc.R.menu.menu, menu);
+        inflater.inflate(R.menu.menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case com.pellcorp.android.netflixbmc.R.id.settings:
+            case R.id.settings:
                 startActivity(new Intent(this, PreferenceActivity.class));
                 return true;
         }
