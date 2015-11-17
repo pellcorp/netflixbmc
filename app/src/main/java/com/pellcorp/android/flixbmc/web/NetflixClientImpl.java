@@ -59,7 +59,7 @@ public class NetflixClientImpl implements NetflixClient {
     public WebResourceResponse loadUrl(String url) {
         NetflixUrl netflixUrl = new NetflixUrl(url);
 
-        // note due to shouldOverrideUrlLoading, no /watch url ever gets here, so need to cater for it
+        // note due to shouldOverrideUrlLoading, no /watch url ever gets here, so no need to cater for it
         if (netflixUrl.isNetflixUrl()) {
             client.getParams().setParameter(AllClientPNames.USER_AGENT, UserAgents.Mobile);
 

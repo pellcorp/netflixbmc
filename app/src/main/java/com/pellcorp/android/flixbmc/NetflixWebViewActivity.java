@@ -222,6 +222,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             webView.loadUrl("https://www.netflix.com");
         } else {
             // we finish the activity here after dismissing this dialog
+            // TODO - should we give the user a chance to retry the login?
             Dialog dialog = ActivityUtils.createErrorDialog(
                     this,
                     getString(R.string.login_failed),
