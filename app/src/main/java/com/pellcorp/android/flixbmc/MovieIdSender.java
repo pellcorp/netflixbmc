@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientResponse;
 import com.pellcorp.android.flixbmc.web.NetflixUrl;
+import static com.pellcorp.android.flixbmc.ActivityUtils.OnCloseType.FINISH;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +44,7 @@ public class MovieIdSender {
                     Toast.makeText(activity, R.string.successful_submission, Toast.LENGTH_SHORT).show();
                     activity.finish();
                 } else if (result.isError()) {
-                    Dialog dialog = ActivityUtils.createErrorDialog(
-                            activity,
-                            getString(R.string.invalid_kodi_settings),
-                            getString(R.string.kodi_instance_not_accessible),
-                            true);
-                    dialog.show();
+                    ActivityUtils.createErrorDialog(activity, R.string.kodi_instance_not_accessible, FINISH);
                 }
                 super.onPostExecute(result);
             }

@@ -10,24 +10,40 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.WindowManager;
 
 public class ActivityUtils {
+    public enum OnCloseType {
+        FINISH, RECREATE, NONE
+    }
 
-    public static AlertDialog createErrorDialog(final Activity activity, String title, String message, final boolean doFinish) {
+    public static void createErrorDialog(final Activity activity, int messageId, final OnCloseType onCloseType) {
+        createErrorDialog(activity, activity.getString(messageId), onCloseType);
+    }
+
+    public static void createErrorDialog(final Activity activity, String message, final OnCloseType onCloseType) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
-        builder.setTitle(title);
 
         builder.setPositiveButton(android.R.string.ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if (doFinish) {
+                        if (onCloseType.equals(OnCloseType.FINISH)) {
                             activity.finish();
+                        } else if (onCloseType.equals(OnCloseType.RECREATE)) {
+                            activity.recreate();
                         }
                     }
                 });
-        return builder.create();
+
+        builder.setNegativeButton(android.R.string.cancel, null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
-    public static AlertDialog createSettingsMissingDialog(final Activity activity, String message) {
+    public static void createSettingsMissingDialog(final Activity activity, int messageId) {
+        createSettingsMissingDialog(activity, activity.getString(messageId));
+    }
+
+    public static void createSettingsMissingDialog(final Activity activity, String message) {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
@@ -46,7 +62,8 @@ public class ActivityUtils {
                 activity.finish();
             }
         });
-        return builder.create();
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public static ProgressDialog createProgressDialog(Context mContext) {

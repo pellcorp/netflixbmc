@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
 import com.pellcorp.android.flixbmc.web.NetflixUrl;
+import static com.pellcorp.android.flixbmc.ActivityUtils.OnCloseType.FINISH;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,12 +70,7 @@ public class SendToKodiActivity extends Activity {
             MovieIdSender sender = new MovieIdSender(jsonClient, this);
             sender.sendMovie(netflixUrl);
         } else {
-            Dialog dialog = ActivityUtils.createErrorDialog(
-                    this,
-                    getString(R.string.url_not_supported),
-                    getString(R.string.netflix_title_url_not_supported),
-                    true);
-            dialog.show();
+            ActivityUtils.createErrorDialog(this, R.string.netflix_title_url_not_supported, FINISH);
         }
     }
 }
