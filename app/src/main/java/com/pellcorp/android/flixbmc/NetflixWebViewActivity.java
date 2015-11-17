@@ -16,8 +16,8 @@ import android.webkit.CookieSyncManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
-import static com.pellcorp.android.flixbmc.ActivityUtils.OnCloseType.FINISH;
-import static com.pellcorp.android.flixbmc.ActivityUtils.OnCloseType.RECREATE;
+import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_FINISH;
+import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_RECREATE;
 
 import com.pellcorp.android.flixbmc.web.LoginResponse;
 import com.pellcorp.android.flixbmc.web.NetflixClient;
@@ -213,7 +213,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
             loadNetflixTask.execute(username, password);
         } else {
-            ActivityUtils.createSettingsMissingDialog(this, getString(R.string.missing_settings));
+            ActivityUtils.createSettingsMissingDialog(this, getString(R.string.invalid_kodi_settings));
         }
     }
 
@@ -245,9 +245,9 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             if (result.isInvalidCredentials()) {
                 ActivityUtils.createSettingsMissingDialog(this, R.string.netflix_invalid_credentials);
             } else if (result.isUnableToProcessRequest()) {
-                ActivityUtils.createErrorDialog(this, R.string.netflix_not_responding, RECREATE);
+                ActivityUtils.createErrorDialog(this, R.string.netflix_not_responding, OK_RECREATE);
             } else {
-                ActivityUtils.createErrorDialog(this, result.getFailureReason(), FINISH);
+                ActivityUtils.createErrorDialog(this, result.getFailureReason(), OK_FINISH);
             }
         }
     }

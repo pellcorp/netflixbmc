@@ -1,13 +1,12 @@
 package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
 import com.pellcorp.android.flixbmc.web.NetflixUrl;
-import static com.pellcorp.android.flixbmc.ActivityUtils.OnCloseType.FINISH;
+import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_FINISH_NO_CANCEL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +40,7 @@ public class SendToKodiActivity extends Activity {
             logger.debug("Netflix Shared Text: {}", sharedText);
             NetflixUrl netflixUrl = new NetflixUrl(sharedText);
             sendToKodi(netflixUrl);
+        } else {
             finish();
         }
     }
@@ -51,6 +51,8 @@ public class SendToKodiActivity extends Activity {
         if (sharedText != null) {
             NetflixUrl netflixUrl = new NetflixUrl(sharedText);
             sendToKodi(netflixUrl);
+        } else {
+            finish();
         }
     }
 
@@ -70,7 +72,7 @@ public class SendToKodiActivity extends Activity {
             MovieIdSender sender = new MovieIdSender(jsonClient, this);
             sender.sendMovie(netflixUrl);
         } else {
-            ActivityUtils.createErrorDialog(this, R.string.netflix_title_url_not_supported, FINISH);
+            ActivityUtils.createErrorDialog(this, R.string.netflix_share_not_supported, OK_FINISH_NO_CANCEL);
         }
     }
 }

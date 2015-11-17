@@ -1,14 +1,13 @@
 package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientResponse;
 import com.pellcorp.android.flixbmc.web.NetflixUrl;
-import static com.pellcorp.android.flixbmc.ActivityUtils.OnCloseType.FINISH;
+import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_FINISH_NO_CANCEL;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,10 +40,10 @@ public class MovieIdSender {
             @Override
             protected void onPostExecute(JsonClientResponse result) {
                 if (result.isSuccess()) {
-                    Toast.makeText(activity, R.string.successful_submission, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, R.string.play_on_kodi_request_successful, Toast.LENGTH_LONG).show();
                     activity.finish();
                 } else if (result.isError()) {
-                    ActivityUtils.createErrorDialog(activity, R.string.kodi_instance_not_accessible, FINISH);
+                    ActivityUtils.createErrorDialog(activity, R.string.kodi_instance_not_accessible, OK_FINISH_NO_CANCEL);
                 }
                 super.onPostExecute(result);
             }
