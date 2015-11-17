@@ -32,16 +32,21 @@ public class KodiNetflixChecker {
         AsyncTask<Void, Integer, KodiNetflixCheckerStatus> asyncTask = new AsyncTask<Void, Integer, KodiNetflixCheckerStatus>() {
             @Override
             protected KodiNetflixCheckerStatus doInBackground(Void ... params) {
-                return doCheck();
+				try {
+                	return doCheck();
+				} catch (Exception e) {
+					logger.error("Failed to execute", e);
+					return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
+				}
             }
         };
 
-        try {
-            return asyncTask.execute().get();
-        } catch (Exception e) {
-            logger.error("Failed to execute", e);
-            return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
-        }
+		try {
+			return asyncTask.execute().get();
+		} catch (Exception e) {
+			logger.error("Failed to execute", e);
+			return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
+		}
     }
 
 	private KodiNetflixCheckerStatus doCheck() {
