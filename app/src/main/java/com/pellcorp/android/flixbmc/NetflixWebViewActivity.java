@@ -168,7 +168,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
                 loadNetflixTask.execute(username, password);
             } else {
                 Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
-                        getString(R.string.missing_netflix_credentials), true);
+                        getString(R.string.missing_settings), true);
                 dialog.show();
             }
         }

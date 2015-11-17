@@ -70,7 +70,7 @@ public class SendToKodiActivity extends Activity {
             finish();
         } else {
             Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
-                    getString(R.string.missing_kodi_connection_settings), true);
+                    getString(R.string.missing_settings), true);
             dialog.show();
         }
     }

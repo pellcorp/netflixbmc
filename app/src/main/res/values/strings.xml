@@ -18,8 +18,7 @@
     <string name="pref_netflix_username">username</string>
     <string name="pref_netflix_password">password</string>
 
-    <string name="missing_netflix_credentials">Missing Netflix Credentials</string>
-    <string name="missing_kodi_connection_settings">Missing Kodi Connection Settings</string>
+    <string name="missing_settings">Missing Settings</string>
     <string name="invalid_kodi_settings">Invalid Kodi Settings</string>
     
     <string name="successful_submission">Successful Submission</string>
