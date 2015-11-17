@@ -1,5 +1,6 @@
 package com.pellcorp.android.flixbmc;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -39,7 +40,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.webview);
+        setContentView(R.layout.webview);
 
         webView = (WebView) findViewById(R.id.webView1);
 
@@ -71,15 +72,9 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 	}
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        // Restore the state of the WebView
         webView.restoreState(savedInstanceState);
     }
 
@@ -208,13 +203,13 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         LoginResponse state = netflixClient.login(email, password);
 
         if (state.isSuccessful()) {
-            CookieSyncManager.createInstance(this);
+            CookieSyncManager syncManager = CookieSyncManager.createInstance(this);
             List<Cookie> cookies = netflixClient.getCookieStore().getCookies();
 
             for (Cookie cookie : cookies) {
                 String cookieString = cookie.getName() + "=" + cookie.getValue() + "; domain=" + cookie.getDomain();
                 cookieManager.setCookie("netflix.com", cookieString);
-                CookieSyncManager.getInstance().sync();
+                syncManager.sync();
             }
             return state;
         } else {
@@ -226,10 +221,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         if (result.isSuccessful()) {
             webView.loadUrl("https://www.netflix.com");
         } else {
-            String htmlWrongCredentials = getString(R.string.netflix_wrong_credentials_html);
-
-            webView.loadData(htmlWrongCredentials, "text/html", null);
-
+            // we finish the activity here after dismissing this dialog
             Dialog dialog = ActivityUtils.createErrorDialog(
                     this,
                     getString(R.string.login_failed),
@@ -238,5 +230,4 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             dialog.show();
         }
     }
-
 }

@@ -35,14 +35,17 @@ import java.util.List;
 public class NetflixClientImpl implements NetflixClient {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
+    public static final int MAX_AUTH_PAGE_RETRIES = 10;
+
     public static final String LOGIN_URL = "https://signup.netflix.com/Login";
 
-    private DefaultHttpClient client;
+    private final DefaultHttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
 
     public NetflixClientImpl() {
         HttpParams params = new BasicHttpParams();
         params.setParameter(AllClientPNames.USER_AGENT, UserAgents.Mobile);
+
         this.client = new DefaultHttpClient(params);
         this.client.setCookieStore(cookieStore);
     }
@@ -71,7 +74,6 @@ public class NetflixClientImpl implements NetflixClient {
         // else
         return null;
     }
-
 
     private WebResourceResponse doLoadUrl(String url) {
         try {
@@ -109,10 +111,12 @@ public class NetflixClientImpl implements NetflixClient {
 
     @Override
     public LoginResponse login(String email, String password) {
+        cookieStore.clear();
+
         try {
             String authUrl = getAuthUrl();
             if (authUrl == null) {
-                return new LoginResponse(false, "Login failed");
+                return new LoginResponse(false, "Pre-Login failure");
             }
 
             HttpPost post = new HttpPost(LOGIN_URL);
@@ -138,7 +142,6 @@ public class NetflixClientImpl implements NetflixClient {
                 Elements loggedIn = doc.getElementsByAttributeValue("id", "page-LOGIN");
 
                 if (loggedIn.size() > 0) {
-                    //<div id="aerrors"><ul><li>Sorry, we are unable to process your request. Please try again later.</li></ul></div>
                     Elements errors = doc.getElementsByAttributeValue("id", "aerrors");
                     if (errors.size() > 0) {
                         Element error = errors.get(0);
@@ -163,8 +166,9 @@ public class NetflixClientImpl implements NetflixClient {
 
         //Netflix sometimes sends "BLOCKED", just try again
         int i = 0;
-        while (i++ < 10) {
+        while (i++ < MAX_AUTH_PAGE_RETRIES) {
             HttpContext localContext = new BasicHttpContext();
+            localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
             HttpGet get = new HttpGet(LOGIN_URL);
             HttpResponse response = client.execute(get, localContext);
             String html = EntityUtils.toString(response.getEntity());
