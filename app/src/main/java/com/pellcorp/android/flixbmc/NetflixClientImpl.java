@@ -56,13 +56,16 @@ public class NetflixClientImpl implements NetflixClient {
 
     @Override
     public WebResourceResponse loadUrl(String url) {
-        // looks odd, its just for easier debugging
-        if (url.contains("www.netflix.com/")) {
-            if (url.contains("www.netflix.com/watch")) {
-                client.getParams().setParameter(AllClientPNames.USER_AGENT, UserAgents.Mobile);
-                return doLoadUrl(url);
-            } else if (url.contains("www.netflix.com/title")) {
+        NetflixUrl netflixUrl = new NetflixUrl(url);
+
+        // note due to shouldOverrideUrlLoading, no /watch url ever gets here, so need to cater for it
+        if (netflixUrl.isNetflixUrl()) {
+            client.getParams().setParameter(AllClientPNames.USER_AGENT, UserAgents.Mobile);
+
+            if (netflixUrl.isTitle()) {
                 client.getParams().setParameter(AllClientPNames.USER_AGENT, UserAgents.Desktop);
+                return doLoadUrl(url);
+            } else if (netflixUrl.isDefault() || netflixUrl.isDefault()) {
                 return doLoadUrl(url);
             }
         }
@@ -70,6 +73,7 @@ public class NetflixClientImpl implements NetflixClient {
         // else
         return null;
     }
+
 
     private WebResourceResponse doLoadUrl(String url) {
         try {
@@ -116,7 +120,6 @@ public class NetflixClientImpl implements NetflixClient {
             HttpPost post = new HttpPost(LOGIN_URL);
 
             HttpContext localContext = new BasicHttpContext();
-            cookieStore.clear();
             localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
             List<NameValuePair> parameters = new ArrayList<NameValuePair>();
@@ -143,7 +146,6 @@ public class NetflixClientImpl implements NetflixClient {
                         Element error = errors.get(0);
                         return new LoginResponse(false, error.text());
                     } else {
-
                         return new LoginResponse(false, "Login failed");
                     }
 
@@ -164,8 +166,9 @@ public class NetflixClientImpl implements NetflixClient {
         //Netflix sometimes sends "BLOCKED", just try again
         int i = 0;
         while (i++ < 10) {
+            HttpContext localContext = new BasicHttpContext();
             HttpGet get = new HttpGet(LOGIN_URL);
-            HttpResponse response = client.execute(get);
+            HttpResponse response = client.execute(get, localContext);
             String html = EntityUtils.toString(response.getEntity());
 
             Document doc = Jsoup.parse(html, LOGIN_URL);

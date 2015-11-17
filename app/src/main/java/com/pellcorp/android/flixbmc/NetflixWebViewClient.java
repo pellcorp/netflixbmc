@@ -74,7 +74,8 @@ public class NetflixWebViewClient extends WebViewClient {
             return false;
         }
 
-        if(!url.contains("://www.netflix.com/watch/") ) {
+        NetflixUrl netflixUrl = new NetflixUrl(url);
+        if (!netflixUrl.isWatch()) {
             return false;
         }
 

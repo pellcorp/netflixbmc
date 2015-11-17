@@ -35,19 +35,14 @@ public class JsonClientImpl implements JsonClient {
 
 			urlWithoutUserInfo = jsonRpcUrl.getProtocol() + "://" + jsonRpcUrl.getHost() + ":" +
 					jsonRpcUrl.getPort() + jsonRpcUrl.getPath();
-        }
-        else {
+        } else {
 			urlWithoutUserInfo = jsonRpcUrl.toString();
         }
 
-
-        if(username != null && password != null)
-        {
+        if(username != null && password != null) {
 		    authenticator = new BasicAuthenticator();
 		    authenticator.setCredentials(username, password);
-        }
-        else
-        {
+        } else {
             authenticator = null;
         }
 

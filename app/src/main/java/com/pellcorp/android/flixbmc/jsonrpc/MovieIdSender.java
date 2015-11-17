@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.pellcorp.android.flixbmc.ActivityUtils;
+import com.pellcorp.android.flixbmc.NetflixUrl;
 import com.pellcorp.android.flixbmc.R;
 
 import java.util.HashMap;
@@ -24,16 +25,15 @@ public class MovieIdSender {
         this.activity = activity;
 	}
 	
-	//http://www.netflix.com/watch/70259443?trackId=13462050&tctx=1%2C0%2C48d00020-b7c9-46ea-ae58-219011a2ed29-16193513
-	public JsonClientResponse sendMovie(String url) {
-        AsyncTask<String, Integer, JsonClientResponse> asyncTask = new AsyncTask<String, Integer, JsonClientResponse>() {
+	public JsonClientResponse sendMovie(NetflixUrl url) {
+        AsyncTask<NetflixUrl, Integer, JsonClientResponse> asyncTask = new AsyncTask<NetflixUrl, Integer, JsonClientResponse>() {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
             }
 
             @Override
-            protected JsonClientResponse doInBackground(String ... params) {
+            protected JsonClientResponse doInBackground(NetflixUrl ... params) {
                 return doSendMovie(params[0]);
             }
 
@@ -60,10 +60,9 @@ public class MovieIdSender {
         }
     }
 
-    private JsonClientResponse doSendMovie(String url) {
-		logger.info("URL {}", url);
-		String movieId = getMovieId(url);
-		
+    private JsonClientResponse doSendMovie(NetflixUrl netflixUrl) {
+        String movieId = netflixUrl.getId();
+
 		logger.info("movieId {}", movieId);
 		
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -72,17 +71,5 @@ public class MovieIdSender {
 		itemParams.put("file", "plugin://plugin.video.netflixbmc/?mode=playVideo&url=" + movieId);
 		JsonClientResponse response = client.send("Player.Open", params);
 		return response;
-	}
-	
-	private String getMovieId(String url) {
-		int indexOf = url.indexOf("netflix.com/watch/");
-		if (indexOf != -1) {
-			url = url.substring(indexOf + "netflix.com/watch/".length());
-			int indexOfQuestion = url.indexOf("?");
-			if (indexOfQuestion != -1) {
-				url = url.substring(0, indexOfQuestion);
-			}
-		}
-		return url;
 	}
 }

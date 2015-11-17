@@ -36,28 +36,34 @@ public class SendToKodiActivity extends Activity {
 
     private void handleNetflixShare(Intent intent) {
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-        logger.debug("Netflix Shared Text: {}", sharedText);
 
         if (sharedText != null) {
-            sendToKodi(sharedText);
+            logger.debug("Netflix Shared Text: {}", sharedText);
+            NetflixUrl netflixUrl = new NetflixUrl(sharedText);
+            sendToKodi(netflixUrl);
             finish();
         }
     }
 
     private void handleSendToKodi(Intent intent) {
-        String url = intent.getStringExtra(NETFLIX_URL);
-        logger.debug("Send To Netflix URL: {}", url);
-        sendToKodi(url);
+        String sharedText = intent.getStringExtra(NETFLIX_URL);
+
+        if (sharedText != null) {
+            NetflixUrl netflixUrl = new NetflixUrl(sharedText);
+            sendToKodi(netflixUrl);
+        }
     }
 
-    private void sendToKodi(String netflixUrl) {
+    private void sendToKodi(NetflixUrl netflixUrl) {
         Preferences preferences = new Preferences(this);
 
         String url = preferences.getString(R.string.pref_host_url);
         String kodi_username = preferences.getString(R.string.pref_kodi_username);
         String kodi_password = preferences.getString(R.string.pref_kodi_password);
 
-        if (url != null) {
+        if (netflixUrl.isNetflixUrl()) {
+            logger.debug("Send To Netflix URL: {}", url);
+
             JsonClient jsonClient = new JsonClientImpl(url, kodi_username, kodi_password);
 
             MovieIdSender sender = new MovieIdSender(jsonClient, this);
@@ -71,8 +77,11 @@ public class SendToKodiActivity extends Activity {
 
             finish();
         } else {
-            Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
-                    getString(R.string.missing_settings), true);
+            Dialog dialog = ActivityUtils.createErrorDialog(
+                    this,
+                    getString(R.string.url_not_supported),
+                    getString(R.string.netflix_title_url_not_supported),
+                    true);
             dialog.show();
         }
     }

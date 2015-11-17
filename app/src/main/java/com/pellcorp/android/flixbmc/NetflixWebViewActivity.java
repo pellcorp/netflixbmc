@@ -158,8 +158,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         }
     }
 
-    private void tryLoginWithProgressDialog()
-    {
+    private void tryLoginWithProgressDialog() {
         Preferences preferences = new Preferences(this);
         String username = preferences.getString(R.string.pref_netflix_username);
         String password = preferences.getString(R.string.pref_netflix_password);
@@ -197,10 +196,21 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         }
     }
 
-
     private LoginResponse doLogin(String email, String password) {
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeAllCookie();
+
         LoginResponse state = netflixClient.login(email, password);
+
         if (state.isSuccessful()) {
+            CookieSyncManager.createInstance(this);
+            List<Cookie> cookies = netflixClient.getCookieStore().getCookies();
+
+            for (Cookie cookie : cookies) {
+                String cookieString = cookie.getName() + "=" + cookie.getValue() + "; domain=" + cookie.getDomain();
+                cookieManager.setCookie("netflix.com", cookieString);
+                CookieSyncManager.getInstance().sync();
+            }
             return state;
         } else {
             return state;
