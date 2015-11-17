@@ -65,7 +65,7 @@ public class NetflixClientImpl implements NetflixClient {
             if (netflixUrl.isTitle()) {
                 client.getParams().setParameter(AllClientPNames.USER_AGENT, UserAgents.Desktop);
                 return doLoadUrl(url);
-            } else if (netflixUrl.isDefault() || netflixUrl.isDefault()) {
+            } else if (netflixUrl.isBrowse() || netflixUrl.isDefault()) {
                 return doLoadUrl(url);
             }
         }

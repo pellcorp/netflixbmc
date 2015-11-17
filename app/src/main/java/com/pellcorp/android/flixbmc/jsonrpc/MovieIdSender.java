@@ -61,6 +61,9 @@ public class MovieIdSender {
     }
 
     private JsonClientResponse doSendMovie(NetflixUrl netflixUrl) {
+        // TODO - we could call the listVideos for 'title' url's, unfortunately
+        // we have no way to know if a title is a 'movie' or a series, perhaps there is
+        // something else in the originating page that we can get access to to make that decision
         String movieId = netflixUrl.getId();
 
 		logger.info("movieId {}", movieId);

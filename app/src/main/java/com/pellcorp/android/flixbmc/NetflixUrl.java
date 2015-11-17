@@ -3,11 +3,9 @@ package com.pellcorp.android.flixbmc;
 public class NetflixUrl {
     private static String NETFLIX_DOMAIN = "www.netflix.com/";
 
-    private String url;
     private String resource;
 
     public NetflixUrl(String url) {
-        this.url = url;
         this.resource = getResource(url);
     }
 
@@ -16,15 +14,15 @@ public class NetflixUrl {
     }
 
     public boolean isWatch() {
-        return resource != null && resource.contains("watch/");
+        return resource != null && resource.startsWith("watch/");
     }
 
     public boolean isTitle() {
-        return resource != null && resource.contains("title/");
+        return resource != null && resource.startsWith("title/");
     }
 
     public boolean isBrowse() {
-        return resource != null && resource.contains("browse");
+        return resource != null && resource.startsWith("browse");
     }
 
     public boolean isDefault() {
