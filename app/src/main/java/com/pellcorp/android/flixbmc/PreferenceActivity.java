@@ -1,7 +1,9 @@
 package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -30,15 +32,10 @@ public class PreferenceActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        // FIXME - we really should allow the user out of the dog house if they
-        // can't fix the preferences, at the moment any errors will mean they
-        // cant get back
-        if(areSettingsValid()) {
-            super.onBackPressed();
-        }
+        checkSettings();
     }
 
-    private boolean areSettingsValid() {
+    private void checkSettings() {
         Preferences preferences = new Preferences(this);
         try {
             JsonClient jsonClient = new JsonClientImpl(
@@ -50,30 +47,44 @@ public class PreferenceActivity extends Activity {
             KodiNetflixCheckerStatus status = checker.check();
 
             if (status.equals(MISSING_PLUGIN)) {
-                Dialog dialog = ActivityUtils.createErrorDialog(
-                        this,
-                        getString(R.string.invalid_kodi_settings),
-                        getString(R.string.netflixbmc_plugin_not_installed), false);
-                dialog.show();
-                return false;
+                showInvalidSettingsDialog(
+                        R.string.invalid_kodi_settings,
+                        R.string.netflixbmc_plugin_not_installed);
             } else if (status.equals(CONNECT_EXCEPTION)) {
-                Dialog dialog = ActivityUtils.createErrorDialog(
-                        this,
-                        getString(R.string.invalid_kodi_settings),
-                        getString(R.string.kodi_instance_not_accessible),
-                        false);
-                dialog.show();
-                return false;
+                showInvalidSettingsDialog(
+                        R.string.invalid_kodi_settings,
+                        R.string.kodi_instance_not_accessible);
             } else { // NORMAL
-                return true;
+                super.onBackPressed();
             }
         } catch (Exception e) {
-            Dialog dialog = ActivityUtils.createErrorDialog(
-                    this,
-                    getString(R.string.invalid_kodi_settings),
-                    e.getMessage(), false);
-            dialog.show();
-            return false;
+            // TODO - figure out a way to not display the exception!
+            showInvalidSettingsDialog(
+                    R.string.invalid_kodi_settings,
+                    e.getMessage());
         }
     }
+
+    private void showInvalidSettingsDialog(int title, int message) {
+        showInvalidSettingsDialog(title, getString(message));
+    }
+
+    private void showInvalidSettingsDialog(int title, String message) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(message);
+        builder.setTitle(title);
+
+        // TODO - is 'Ok' the right button to indicate stay in preferences and fix the issue
+        builder.setPositiveButton(android.R.string.ok, null);
+
+        builder.setNegativeButton(R.string.ignore, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                PreferenceActivity.super.onBackPressed();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 }
