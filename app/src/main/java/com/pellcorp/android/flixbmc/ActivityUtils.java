@@ -25,6 +25,8 @@ public class ActivityUtils {
         builder.setPositiveButton(android.R.string.ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
                         if (onCloseType.equals(OnCloseType.FINISH)) {
                             activity.finish();
                         } else if (onCloseType.equals(OnCloseType.RECREATE)) {
@@ -33,7 +35,11 @@ public class ActivityUtils {
                     }
                 });
 
-        builder.setNegativeButton(android.R.string.cancel, null);
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -44,8 +50,7 @@ public class ActivityUtils {
     }
 
     public static void createSettingsMissingDialog(final Activity activity, String message) {
-        AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
 
         builder.setPositiveButton(R.string.settings_label, new DialogInterface.OnClickListener() {
@@ -53,12 +58,13 @@ public class ActivityUtils {
                 activity.startActivity(new Intent(
                         activity,
                         PreferenceActivity.class));
-                activity.finish();
+                dialog.dismiss();
             }
         });
 
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
                 activity.finish();
             }
         });
@@ -68,6 +74,7 @@ public class ActivityUtils {
 
     public static ProgressDialog createProgressDialog(Context mContext) {
         ProgressDialog dialog = new ProgressDialog(mContext);
+
         try {
             dialog.show();
         } catch (WindowManager.BadTokenException e) {
@@ -77,6 +84,7 @@ public class ActivityUtils {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.setContentView(R.layout.progress_dialog);
+        dialog.dismiss();
         return dialog;
     }
 }

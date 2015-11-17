@@ -1,12 +1,9 @@
 package com.pellcorp.android.flixbmc;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -35,11 +32,12 @@ import java.util.List;
 public class NetflixWebViewActivity extends Activity implements NetflixWebViewClientServiceProvider {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    private ProgressDialog progressDialog;
     private WebView webView;
     private Bundle pausedState;
-    private NetflixClient netflixClient;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = null;
+
+    private NetflixClient netflixClient;
+    private ProgressDialog progressDialog;
 
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,7 +52,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         progressDialog = ActivityUtils.createProgressDialog(NetflixWebViewActivity.this);
 
         NetflixWebViewClient viewClient = new NetflixWebViewClient(this, progressDialog);
-
         webView.setWebViewClient(viewClient);
 
         netflixClient = new NetflixClientImpl();
@@ -87,8 +84,10 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (webView != null)
+
+        if (webView != null) {
             webView.destroy();
+        }
     }
 
     @Override
@@ -97,7 +96,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         sendToKodi.putExtra(SendToKodiActivity.NETFLIX_URL, url);
         sendToKodi.setAction(SendToKodiActivity.SEND_TO_KODI);
         startActivity(sendToKodi);
-
     }
 
     @Override
@@ -106,12 +104,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         return netflixClient.loadUrl(url);
 	}
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -119,6 +111,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         pausedState = new Bundle();
         webView.saveState(pausedState);
     }
+
 
     @Override
     public void onBackPressed() {
@@ -173,7 +166,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             AsyncTask<String, Void, LoginResponse> loadNetflixTask = new AsyncTask<String, Void, LoginResponse>() {
                 @Override
                 protected void onPreExecute() {
-                    progressDialog.setMessage(getString(R.string.logging_in));
                     progressDialog.show();
                 }
 
@@ -186,6 +178,10 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
                 @Override
                 protected void onPostExecute(LoginResponse result) {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+
                     postLoginExecute(result);
                     super.onPostExecute(result);
                 }
@@ -222,10 +218,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         if (result.isSuccessful()) {
             webView.loadUrl("https://www.netflix.com");
         } else {
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-
             if (result.isInvalidCredentials()) {
                 ActivityUtils.createSettingsMissingDialog(this, R.string.netflix_invalid_credentials);
             } else if (result.isUnableToProcessRequest()) {

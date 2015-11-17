@@ -55,8 +55,6 @@ public class NetflixWebViewClient extends WebViewClient {
             progressDialog.show();
         }
 
-        progressDialog.setMessage(progressDialog.getContext().getString(R.string.loading));
-
         super.onPageStarted(view, url, favicon);
     }
 

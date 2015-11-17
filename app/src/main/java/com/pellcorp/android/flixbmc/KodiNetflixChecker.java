@@ -1,6 +1,15 @@
-package com.pellcorp.android.flixbmc.jsonrpc;
+package com.pellcorp.android.flixbmc;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClientResponse;
+import com.pellcorp.android.flixbmc.web.LoginResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,35 +22,47 @@ import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.pellcorp.android.flixbmc.jsonrpc.KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
-import static com.pellcorp.android.flixbmc.jsonrpc.KodiNetflixCheckerStatus.NORMAL;
-import static com.pellcorp.android.flixbmc.jsonrpc.KodiNetflixCheckerStatus.MISSING_PLUGIN;
-
 public class KodiNetflixChecker {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
 	public static final String PLUGIN_VIDEO_NETFLIXBMC = "plugin.video.netflixbmc";
 
 	private final JsonClient client;
-	
-	public KodiNetflixChecker(JsonClient client) {
-		this.client = client;
+	private final ProgressDialog progressDialog;
+
+	public KodiNetflixChecker(Preferences preferences, ProgressDialog progressDialog) {
+        this.client = new JsonClientImpl(
+                preferences.getString(R.string.pref_host_url),
+                preferences.getString(R.string.pref_kodi_username),
+                preferences.getString(R.string.pref_kodi_password));
+
+        this.progressDialog = progressDialog;
 	}
 
-    public KodiNetflixCheckerStatus check() {
+    public void doCheck(final KodiNetflixCheckerListener listener) {
         AsyncTask<Void, Integer, KodiNetflixCheckerStatus> asyncTask = new AsyncTask<Void, Integer, KodiNetflixCheckerStatus>() {
+            @Override
+            protected void onPreExecute() {
+                progressDialog.show();
+            }
+
             @Override
             protected KodiNetflixCheckerStatus doInBackground(Void ... params) {
 				return doCheck();
             }
+
+            @Override
+            protected void onPostExecute(KodiNetflixCheckerStatus result) {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+
+                listener.onPostExecute(result);
+                super.onPostExecute(result);
+            }
         };
 
-		try {
-			return asyncTask.execute().get();
-		} catch (Exception e) {
-			logger.error("Failed to execute", e);
-			return CONNECT_EXCEPTION;
-		}
+        asyncTask.execute();
     }
 
 	private KodiNetflixCheckerStatus doCheck() {
@@ -62,17 +83,17 @@ public class KodiNetflixChecker {
 				}
 
 				if (addonList.contains(PLUGIN_VIDEO_NETFLIXBMC)) {
-					return NORMAL;
+					return KodiNetflixCheckerStatus.NORMAL;
 				} else {
-					return MISSING_PLUGIN;
+					return KodiNetflixCheckerStatus.MISSING_PLUGIN;
 				}
 			} else {
-				return CONNECT_EXCEPTION;
+				return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
 			}
 		}
 		catch (Exception e) {
 			logger.error("Failed to execute", e);
-			return CONNECT_EXCEPTION;
+			return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
 		}
 	}
 }
