@@ -11,6 +11,7 @@ public class Preferences {
     public Preferences(Context ctx) {
         this.ctx = ctx;
         this.preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+
     }
 
     public String getString(int resId) {
@@ -20,5 +21,9 @@ public class Preferences {
         } else {
             return value;
         }
+    }
+
+    public void registerOnPreferenceChangeListener(SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener) {
+        preferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
 }

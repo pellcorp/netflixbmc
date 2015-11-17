@@ -21,9 +21,41 @@ public class JsonClientImpl implements JsonClient {
 	
 	private final AtomicLong requestIdGen = new AtomicLong();
 	private final JSONRPC2Session session;
+	private final BasicAuthenticator authenticator;
 
-	public JsonClientImpl(String url) {
-        URL jsonRpcUrl = toJsonRpcUrl(url);
+	public JsonClientImpl(String url, String username, String password) {
+		URL jsonRpcUrl = toJsonRpcUrl(url);
+		String userInfo = jsonRpcUrl.getUserInfo();
+
+        String urlWithoutUserInfo = null;
+        if(userInfo != null) {
+            String[] userInfoParts = userInfo.split(":", 2);
+            username = userInfoParts[0];
+            password= userInfoParts[1];
+
+			urlWithoutUserInfo = jsonRpcUrl.getProtocol() + "://" + jsonRpcUrl.getHost() + ":" +
+					jsonRpcUrl.getPort() + jsonRpcUrl.getPath();
+        }
+        else {
+			urlWithoutUserInfo = jsonRpcUrl.toString();
+        }
+
+
+        if(username != null && password != null)
+        {
+		    authenticator = new BasicAuthenticator();
+		    authenticator.setCredentials(username, password);
+        }
+        else
+        {
+            authenticator = null;
+        }
+
+		try {
+			jsonRpcUrl = new URL(urlWithoutUserInfo);
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
 
         logger.info("Kodi URL: {}", jsonRpcUrl);
 
@@ -35,7 +67,10 @@ public class JsonClientImpl implements JsonClient {
             if (url.endsWith("/")) {
                 url = url.substring(0, url.length() - 1);
             }
-            return new URL(url + "/jsonrpc");
+			if(!url.endsWith("/jsonrpc") )
+				url += "/jsonrpc";
+
+            return new URL(url);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException(e.getMessage());
         }
@@ -44,8 +79,7 @@ public class JsonClientImpl implements JsonClient {
 	public JsonClientResponse send(String method, Map<String, Object> params) {
 		try {
 			String requestId = requestIdGen.incrementAndGet() + "";
-			JSONRPC2Request request = new JSONRPC2Request(method, requestId);
-			request.setNamedParams(params);
+			JSONRPC2Request request = new JSONRPC2Request(method, params, requestId);
 			
 			logger.debug(request.toString());
 			
@@ -53,7 +87,10 @@ public class JsonClientImpl implements JsonClient {
 			options.setAllowedResponseContentTypes(new String[] {"application/json", "text/html"});
 			options.setConnectTimeout(10000);
 			options.setReadTimeout(30000);
-			
+
+            if(authenticator != null)
+			    session.setConnectionConfigurator(authenticator);
+
 			session.setOptions(options);
 			
 			RawResponseInspector rawResponse = new RawResponseInspector() {

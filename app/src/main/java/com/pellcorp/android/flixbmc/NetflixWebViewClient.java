@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -25,49 +24,27 @@ public class NetflixWebViewClient extends WebViewClient {
     }
 
     @Override
-    public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-        if (url.contains("://www.netflix.com/")) {
-            return null;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        String originalUrl = view.getOriginalUrl();
+        String originalUrl = null;
+        if(view != null)
+            originalUrl = view.getOriginalUrl();
 
-        logger.debug("shouldOverrideUrlLoading: {}", url);
+        if(url.contains("://www.netflix.com/title/") )
+            view.getSettings().setUserAgentString(UserAgents.Desktop);
+        else
+            view.getSettings().setUserAgentString(UserAgents.Mobile);
 
-        if (url.contains("://www.netflix.com/watch/")) {
-            logger.debug("Sending Watch request to Kodi: {}", url);
-
-            Intent sendToKodi = new Intent(activity, SendToKodiActivity.class);
-            sendToKodi.putExtra(SendToKodiActivity.NETFLIX_URL, url);
-            sendToKodi.setAction(SendToKodiActivity.SEND_TO_KODI);
-            activity.startActivity(sendToKodi);
+        if(checkUrl(url) )
             return true;
-        } else {
-            view.loadUrl(url);
+        else if(checkUrl(originalUrl))
             return true;
-        }
-    }
 
-    @Override
-    public void onLoadResource(WebView view, String url) {
-        String originalUrl = view.getOriginalUrl();
-
-        if (url.contains("://www.netflix.com/")) {
-            super.onLoadResource(view, url);
-        } else {
-            super.onLoadResource(view, url);
-        }
+        view.loadUrl(url);
+        return true;
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        String originalUrl = view.getOriginalUrl();
-
         if (!progressDialog.isShowing()) {
             progressDialog.show();
         }
@@ -79,12 +56,27 @@ public class NetflixWebViewClient extends WebViewClient {
 
     @Override
     public void onPageFinished(WebView view, String url) {
-        String originalUrl = view.getOriginalUrl();
-
         super.onPageFinished(view, url);
 
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+    }
+
+    private boolean checkUrl(String url)
+    {
+        if(url == null)
+            return false;
+
+        if(!url.contains("://www.netflix.com/watch/") )
+            return false;
+
+        logger.debug("Sending Watch request to Kodi: {}", url);
+        Intent sendToKodi = new Intent(activity, SendToKodiActivity.class);
+        sendToKodi.putExtra(SendToKodiActivity.NETFLIX_URL, url);
+        sendToKodi.setAction(SendToKodiActivity.SEND_TO_KODI);
+        activity.startActivity(sendToKodi);
+
+        return true;
     }
 }
