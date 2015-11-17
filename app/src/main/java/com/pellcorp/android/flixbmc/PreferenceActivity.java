@@ -30,6 +30,9 @@ public class PreferenceActivity extends Activity {
 
     @Override
     public void onBackPressed() {
+        // FIXME - we really should allow the user out of the dog house if they
+        // can't fix the preferences, at the moment any errors will mean they
+        // cant get back
         if(areSettingsValid()) {
             super.onBackPressed();
         }
