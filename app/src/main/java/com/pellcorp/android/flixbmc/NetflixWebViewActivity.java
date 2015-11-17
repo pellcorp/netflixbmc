@@ -191,7 +191,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             loadNetflixTask.execute(username, password);
         } else {
             Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
-                    getString(R.string.missing_settings), false);
+                    getString(R.string.missing_settings));
             dialog.show();
         }
     }
@@ -225,14 +225,19 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
                 progressDialog.dismiss();
             }
 
-            // we finish the activity here after dismissing this dialog
-            // TODO - should we give the user a chance to retry the login?
-            Dialog dialog = ActivityUtils.createErrorDialog(
-                    this,
-                    getString(R.string.login_failed),
-                    result.getFailureReason(),
-                    true);
-            dialog.show();
+            if (result.isInvalidCredentials()) {
+                Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
+                        result.getFailureReason());
+                dialog.show();
+            } else {
+                // this dismisses the activity as its a fatal error
+                Dialog dialog = ActivityUtils.createErrorDialog(
+                        this,
+                        getString(R.string.login_failed),
+                        result.getFailureReason(),
+                        true);
+                dialog.show();
+            }
         }
     }
 }

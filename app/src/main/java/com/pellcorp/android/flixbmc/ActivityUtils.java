@@ -27,22 +27,25 @@ public class ActivityUtils {
         return builder.create();
     }
 
-    public static AlertDialog createSettingsMissingDialog(final Activity activity, String message, final boolean doFinish) {
+    public static AlertDialog createSettingsMissingDialog(final Activity activity, String message) {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
 
-        builder.setPositiveButton(R.string.settings_label,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        activity.startActivity(new Intent(
-                                activity,
-                                PreferenceActivity.class));
-                        if (doFinish) {
-                            activity.finish();
-                        }
-                    }
-                });
+        builder.setPositiveButton(R.string.settings_label, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                activity.startActivity(new Intent(
+                        activity,
+                        PreferenceActivity.class));
+                activity.finish();
+            }
+        });
+
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                activity.finish();
+            }
+        });
         return builder.create();
     }
 
