@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent">
+
+    <!-- how to make layout width sensitive to device -->
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        android:layout_width="300px"
+        android:layout_height="300px"
+        android:layout_centerInParent="true" />
+
+</RelativeLayout>

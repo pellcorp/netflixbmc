@@ -32,6 +32,7 @@ import java.util.List;
 public class NetflixWebViewActivity extends Activity implements NetflixWebViewClientServiceProvider {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
+    private ProgressDialog progressDialog;
     private WebView webView;
     private Bundle pausedState;
     private NetflixClient netflixClient;
@@ -47,7 +48,9 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUserAgentString(UserAgents.Mobile);
 
-        NetflixWebViewClient viewClient = new NetflixWebViewClient(this);
+        progressDialog = ActivityUtils.createProgressDialog(NetflixWebViewActivity.this);
+
+        NetflixWebViewClient viewClient = new NetflixWebViewClient(this, progressDialog);
 
         webView.setWebViewClient(viewClient);
 
@@ -165,8 +168,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
         if (username != null && password != null) {
             AsyncTask<String, Void, LoginResponse> loadNetflixTask = new AsyncTask<String, Void, LoginResponse>() {
-                ProgressDialog progressDialog = new ProgressDialog(NetflixWebViewActivity.this);
-
                 @Override
                 protected void onPreExecute() {
                     progressDialog.setMessage(getString(R.string.logging_in));
@@ -183,7 +184,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
                 @Override
                 protected void onPostExecute(LoginResponse result) {
                     postLoginExecute(result);
-                    progressDialog.dismiss();
                     super.onPostExecute(result);
                 }
             };
@@ -221,6 +221,10 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         if (result.isSuccessful()) {
             webView.loadUrl("https://www.netflix.com");
         } else {
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
             // we finish the activity here after dismissing this dialog
             // TODO - should we give the user a chance to retry the login?
             Dialog dialog = ActivityUtils.createErrorDialog(

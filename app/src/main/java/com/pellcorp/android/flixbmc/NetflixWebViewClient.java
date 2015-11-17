@@ -19,9 +19,11 @@ public class NetflixWebViewClient extends WebViewClient {
     private final ProgressDialog progressDialog;
     private final NetflixWebViewClientServiceProvider client;
 
-    public NetflixWebViewClient(final NetflixWebViewClientServiceProvider client) {
+    public NetflixWebViewClient(
+            final NetflixWebViewClientServiceProvider client,
+            final ProgressDialog progressDialog) {
         this.client = client;
-        this.progressDialog = new ProgressDialog((Activity) client);
+        this.progressDialog = progressDialog;
     }
 
     @Override

@@ -10,25 +10,24 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application
-        android:name=".FlixbmcClientApplication"
+    <application android:name=".FlixbmcClientApplication"
         android:icon="@drawable/ic_launcher"
         android:theme="@android:style/Theme.Black.NoTitleBar"
         android:label="@string/app_name">
 
-        <activity
-            android:name=".NetflixWebViewActivity"
+        <activity android:name=".NetflixWebViewActivity"
+                  android:background="@color/background"
             android:configChanges="orientation|screenSize">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
         </activity>
 
         <activity android:name=".SendToKodiActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -43,7 +42,7 @@
         </activity>
 
         <activity android:name=".PreferenceActivity"
-                  android:theme="@android:style/Theme.Black" />
+                  android:background="@color/background" />
     </application>
 
 </manifest>

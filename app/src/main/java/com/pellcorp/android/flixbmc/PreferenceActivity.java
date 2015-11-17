@@ -2,10 +2,8 @@ package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
@@ -74,7 +72,6 @@ public class PreferenceActivity extends Activity {
         builder.setMessage(message);
         builder.setTitle(title);
 
-        // TODO - is 'Ok' the right button to indicate stay in preferences and fix the issue
         builder.setPositiveButton(android.R.string.ok, null);
 
         builder.setNegativeButton(R.string.ignore, new DialogInterface.OnClickListener() {
@@ -86,5 +83,4 @@ public class PreferenceActivity extends Activity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 }
