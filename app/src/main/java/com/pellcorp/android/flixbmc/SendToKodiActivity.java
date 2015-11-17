@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClientResponse;
 import com.pellcorp.android.flixbmc.jsonrpc.MovieIdSender;
 
 import org.slf4j.Logger;
@@ -60,7 +61,14 @@ public class SendToKodiActivity extends Activity {
             JsonClient jsonClient = new JsonClientImpl(url, kodi_username, kodi_password);
 
             MovieIdSender sender = new MovieIdSender(jsonClient, this);
-            sender.sendMovie(netflixUrl);
+            JsonClientResponse response = sender.sendMovie(netflixUrl);
+
+            if(!response.isSuccess() ) {
+                Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
+                        getString(R.string.invalid_kodi_settings), true);
+                dialog.show();
+            }
+
             finish();
         } else {
             Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,

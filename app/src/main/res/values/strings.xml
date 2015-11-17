@@ -9,7 +9,7 @@
     <string name="settings_shortcut">s</string>
     
     <string name="pref_url_title">Url</string>
-    <string name="pref_url_summary">Specify a http://host:port</string>
+    <string name="pref_url_summary">Specify a host (E.g. http://host:port)</string>
 
     <string name="pref_kodi_username_title">Username</string>
     <string name="pref_kodi_username_summary">Specify your kodi webinterface username</string>
