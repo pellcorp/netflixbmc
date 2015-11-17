@@ -1,13 +1,10 @@
 package com.pellcorp.android.flixbmc;
 
-/**
- * Created by jason on 17/11/15.
- */
-public class LoginState {
+public class LoginResponse {
     private final String failureReason;
     private final boolean status;
 
-    public LoginState(boolean status, String failureReason) {
+    public LoginResponse(boolean status, String failureReason) {
         this.status = status;
         this.failureReason = failureReason;
     }

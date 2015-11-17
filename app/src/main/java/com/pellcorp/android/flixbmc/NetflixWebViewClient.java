@@ -17,20 +17,16 @@ public class NetflixWebViewClient extends WebViewClient {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final ProgressDialog progressDialog;
-    private final Activity activity;
+    private final NetflixWebViewClientServiceProvider client;
 
-    public NetflixWebViewClient(Activity activity) {
-        this.activity = activity;
-        this.progressDialog = new ProgressDialog(activity);
+    public NetflixWebViewClient(final NetflixWebViewClientServiceProvider client) {
+        this.client = client;
+        this.progressDialog = new ProgressDialog((Activity) client);
     }
 
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-        if (url.contains("://www.netflix.com/")) {
-            return null;
-        } else {
-            return null;
-        }
+        return client.loadUrl(url);
     }
 
     @Override
@@ -42,25 +38,11 @@ public class NetflixWebViewClient extends WebViewClient {
         if (url.contains("://www.netflix.com/watch/")) {
             logger.debug("Sending Watch request to Kodi: {}", url);
 
-            Intent sendToKodi = new Intent(activity, SendToKodiActivity.class);
-            sendToKodi.putExtra(SendToKodiActivity.NETFLIX_URL, url);
-            sendToKodi.setAction(SendToKodiActivity.SEND_TO_KODI);
-            activity.startActivity(sendToKodi);
+            client.sendToKodi(url);
             return true;
         } else {
             view.loadUrl(url);
             return true;
-        }
-    }
-
-    @Override
-    public void onLoadResource(WebView view, String url) {
-        String originalUrl = view.getOriginalUrl();
-
-        if (url.contains("://www.netflix.com/")) {
-            super.onLoadResource(view, url);
-        } else {
-            super.onLoadResource(view, url);
         }
     }
 
