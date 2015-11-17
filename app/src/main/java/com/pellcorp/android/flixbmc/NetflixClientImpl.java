@@ -6,30 +6,21 @@ import android.webkit.WebResourceResponse;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
-import org.apache.http.ProtocolException;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.DefaultRedirectHandler;
-import org.apache.http.impl.client.RedirectLocations;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
@@ -39,28 +30,21 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NetflixClientImpl implements NetflixClient {
-    private final CookieSyncManager syncManager;
-    private final CookieManager cookieManager;
-
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
+    // FIXME - not sure this is still required, will revisit
+    private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
     public static final String LOGIN_URL = "https://signup.netflix.com/Login";
 
     private DefaultHttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
 
-    public NetflixClientImpl(final CookieSyncManager syncManager) {
-        this.syncManager = syncManager;
-        this.cookieManager = CookieManager.getInstance();
-
+    public NetflixClientImpl() {
         HttpParams params = new BasicHttpParams();
         params.setParameter(AllClientPNames.USER_AGENT, USER_AGENT);
         this.client = new DefaultHttpClient(params);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -43,9 +44,21 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
         webView.restoreState(savedInstanceState);
 
-        CookieSyncManager syncManager = CookieSyncManager.createInstance(this);
-        netflixClient = new NetflixClientImpl(syncManager);
+        netflixClient = new NetflixClientImpl();
 	}
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Restore the state of the WebView
+        webView.restoreState(savedInstanceState);
+    }
 
     @Override
     public void onDestroy() {
@@ -72,8 +85,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
     @Override
     protected void onStart() {
         super.onStart();
-
-        logger.info("Starting onStart");
     }
 
     @Override
@@ -184,5 +195,4 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             dialog.show();
         }
     }
-
 }
