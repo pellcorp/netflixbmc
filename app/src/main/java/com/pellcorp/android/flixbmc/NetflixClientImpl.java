@@ -37,8 +37,6 @@ import java.util.List;
 public class NetflixClientImpl implements NetflixClient {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    // FIXME - not sure this is still required, will revisit
-    private static final String USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
     public static final String LOGIN_URL = "https://signup.netflix.com/Login";
 
     private DefaultHttpClient client;
@@ -46,7 +44,7 @@ public class NetflixClientImpl implements NetflixClient {
 
     public NetflixClientImpl() {
         HttpParams params = new BasicHttpParams();
-        params.setParameter(AllClientPNames.USER_AGENT, USER_AGENT);
+        params.setParameter(AllClientPNames.USER_AGENT, UserAgents.Mobile);
         this.client = new DefaultHttpClient(params);
         this.client.setCookieStore(cookieStore);
     }
@@ -58,8 +56,13 @@ public class NetflixClientImpl implements NetflixClient {
 
     @Override
     public WebResourceResponse loadUrl(String url) {
+        // looks odd, its just for easier debugging
         if (url.contains("www.netflix.com/")) {
-            if (url.contains("www.netflix.com/watch") || url.contains("www.netflix.com/title")) {
+            if (url.contains("www.netflix.com/watch")) {
+                client.getParams().setParameter(AllClientPNames.USER_AGENT, UserAgents.Mobile);
+                return doLoadUrl(url);
+            } else if (url.contains("www.netflix.com/title")) {
+                client.getParams().setParameter(AllClientPNames.USER_AGENT, UserAgents.Desktop);
                 return doLoadUrl(url);
             }
         }
@@ -73,6 +76,8 @@ public class NetflixClientImpl implements NetflixClient {
             HttpGet get = new HttpGet(url);
 
             HttpContext localContext = new BasicHttpContext();
+
+            // force skipping the 'use android app or go to web site page'
             BasicClientCookie cookie = new BasicClientCookie("forceWebsite", "true");
             cookie.setDomain(".netflix.com");
             cookie.setPath("/");
@@ -111,6 +116,7 @@ public class NetflixClientImpl implements NetflixClient {
             HttpPost post = new HttpPost(LOGIN_URL);
 
             HttpContext localContext = new BasicHttpContext();
+            cookieStore.clear();
             localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
             List<NameValuePair> parameters = new ArrayList<NameValuePair>();
@@ -151,24 +157,27 @@ public class NetflixClientImpl implements NetflixClient {
         }
     }
 
-    private String getAuthUrl() throws ParseException, IOException {
-        HttpGet get = new HttpGet(LOGIN_URL);
+    private String getAuthUrl() throws ParseException, IOException, InterruptedException {
+        Elements elements = null;
+        String authUrl = null;
 
-        HttpContext localContext = new BasicHttpContext();
-
-        HttpResponse response = client.execute(get, localContext);
-        if (response.getStatusLine().getStatusCode() == 200) {
+        //Netflix sometimes sends "BLOCKED", just try again
+        int i = 0;
+        while (i++ < 10) {
+            HttpGet get = new HttpGet(LOGIN_URL);
+            HttpResponse response = client.execute(get);
             String html = EntityUtils.toString(response.getEntity());
-            if (html != null) {
-                Document doc = Jsoup.parse(html, LOGIN_URL);
-                Elements elements = doc.getElementsByAttributeValue("name", "authURL");
-                String authUrl = elements.first().attr("value");
-                return authUrl;
+
+            Document doc = Jsoup.parse(html, LOGIN_URL);
+            elements = doc.getElementsByAttributeValue("name", "authURL");
+            if(elements != null && elements.size() > 0) {
+                authUrl = elements.first().attr("value");
+                break;
             } else {
-                return null;
+                Thread.sleep(1000);
             }
-        } else {
-            return null;
         }
+
+        return authUrl;
     }
 }

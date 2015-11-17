@@ -32,40 +32,46 @@ public class KodiNetflixChecker {
         AsyncTask<Void, Integer, KodiNetflixCheckerStatus> asyncTask = new AsyncTask<Void, Integer, KodiNetflixCheckerStatus>() {
             @Override
             protected KodiNetflixCheckerStatus doInBackground(Void ... params) {
-                return doCheck();
+				return doCheck();
             }
         };
 
-        try {
-            return asyncTask.execute().get();
-        } catch (Exception e) {
-            logger.error("Failed to execute", e);
-            return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
-        }
+		try {
+			return asyncTask.execute().get();
+		} catch (Exception e) {
+			logger.error("Failed to execute", e);
+			return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
+		}
     }
 
 	private KodiNetflixCheckerStatus doCheck() {
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("type", "xbmc.python.pluginsource");
-		JsonClientResponse response = client.send("Addons.GetAddons", params);
-		if (response.isSuccess()) {
-			JSONObject obj = response.getResponse();
-			JSONObject result = (JSONObject) obj.get("result");
-			JSONArray addons = (JSONArray) result.get("addons");
+		try {
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("type", "xbmc.python.pluginsource");
+			JsonClientResponse response = client.send("Addons.GetAddons", params);
+			if (response.isSuccess()) {
+				JSONObject obj = response.getResponse();
+				JSONObject result = (JSONObject) obj.get("result");
+				JSONArray addons = (JSONArray) result.get("addons");
 
-			List<String> addonList = new ArrayList<String>(addons.size());
-			for (int i = 0; i < addons.size(); i++) {
-				JSONObject addon = (JSONObject) addons.get(i);
-				String addonId = (String) addon.get("addonid");
-				addonList.add(addonId);
-			}
+				List<String> addonList = new ArrayList<String>(addons.size());
+				for (int i = 0; i < addons.size(); i++) {
+					JSONObject addon = (JSONObject) addons.get(i);
+					String addonId = (String) addon.get("addonid");
+					addonList.add(addonId);
+				}
 
-			if (addonList.contains(PLUGIN_VIDEO_NETFLIXBMC)) {
-				return KodiNetflixCheckerStatus.NORMAL;
+				if (addonList.contains(PLUGIN_VIDEO_NETFLIXBMC)) {
+					return KodiNetflixCheckerStatus.NORMAL;
+				} else {
+					return KodiNetflixCheckerStatus.MISSING_PLUGIN;
+				}
 			} else {
-				return KodiNetflixCheckerStatus.MISSING_PLUGIN;
+				return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
 			}
-		} else {
+		}
+		catch (Exception e) {
+			logger.error("Failed to execute", e);
 			return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
 		}
 	}

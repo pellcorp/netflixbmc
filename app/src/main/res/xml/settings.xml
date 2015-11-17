@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
     android:orderingFromXml="true">
 
-    <PreferenceCategory android:title="@string/settings_label">
+    <PreferenceCategory android:title="@string/settings_label_kodi">
          <EditTextPreference
             android:defaultValue="http://localhost:8080"
             android:key="@string/pref_host_url"
@@ -11,14 +11,30 @@
 
         <EditTextPreference
             android:defaultValue=""
+            android:key="@string/pref_kodi_username"
+            android:summary="@string/pref_kodi_username_summary"
+            android:title="@string/pref_kodi_username_title" />
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="@string/pref_kodi_password"
+            android:summary="@string/pref_kodi_password_summary"
+            android:title="@string/pref_kodi_password_title"
+            android:inputType="textPassword" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_label_netflix">
+        <EditTextPreference
+            android:defaultValue=""
             android:key="@string/pref_netflix_username"
             android:summary="@string/pref_netflix_username_summary"
-            android:title="@string/pref_netflix_username_title" />
+            android:title="@string/pref_netflix_username_title"
+            android:inputType="textEmailAddress" />
 
         <EditTextPreference
             android:defaultValue=""
             android:key="@string/pref_netflix_password"
             android:summary="@string/pref_netflix_password_summary"
-            android:title="@string/pref_netflix_password_title" />
+            android:title="@string/pref_netflix_password_title"
+            android:inputType="textPassword" />
     </PreferenceCategory>
 </PreferenceScreen>

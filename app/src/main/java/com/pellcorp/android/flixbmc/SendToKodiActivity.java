@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClientResponse;
 import com.pellcorp.android.flixbmc.jsonrpc.MovieIdSender;
 
 import org.slf4j.Logger;
@@ -38,18 +39,8 @@ public class SendToKodiActivity extends Activity {
         logger.debug("Netflix Shared Text: {}", sharedText);
 
         if (sharedText != null) {
-            String url = getNetflixWatchUrl(sharedText);
-            if (url != null) {
-                sendToKodi(url);
-                finish();
-            } else {
-                Dialog dialog = ActivityUtils.createErrorDialog(
-                        this,
-                        getString(R.string.url_not_supported),
-                        getString(R.string.netflix_title_url_not_supported),
-                        true);
-                dialog.show();
-            }
+            sendToKodi(sharedText);
+            finish();
         }
     }
 
@@ -61,40 +52,28 @@ public class SendToKodiActivity extends Activity {
 
     private void sendToKodi(String netflixUrl) {
         Preferences preferences = new Preferences(this);
+
         String url = preferences.getString(R.string.pref_host_url);
+        String kodi_username = preferences.getString(R.string.pref_kodi_username);
+        String kodi_password = preferences.getString(R.string.pref_kodi_password);
+
         if (url != null) {
-            JsonClient jsonClient = new JsonClientImpl(url);
+            JsonClient jsonClient = new JsonClientImpl(url, kodi_username, kodi_password);
 
             MovieIdSender sender = new MovieIdSender(jsonClient, this);
-            sender.sendMovie(netflixUrl);
+            JsonClientResponse response = sender.sendMovie(netflixUrl);
+
+            if(!response.isSuccess() ) {
+                Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
+                        getString(R.string.invalid_kodi_settings), true);
+                dialog.show();
+            }
+
             finish();
         } else {
             Dialog dialog = ActivityUtils.createSettingsMissingDialog(this,
                     getString(R.string.missing_settings), true);
             dialog.show();
-        }
-    }
-
-    // netflix does not share 'watch' url,
-
-    private String getNetflixWatchUrl(String url) {
-        int indexOf = url.indexOf("www.netflix.com/title/");
-        if (indexOf != -1) {
-            url = url.substring(indexOf);
-            int indexOfQuestion = url.indexOf("?");
-            if (indexOfQuestion != -1) {
-                url = url.substring(0, indexOfQuestion);
-            }
-
-            // TODO - we have no way to tell if this is a tv series or a movie,
-            // but the SendToKodiActivity expects a /watch url, so for now this will
-            // have to do
-            url = "https://" + url.replace("/title/", "/watch/");
-
-            logger.debug("Netflix URL: {}", url);
-            return url;
-        } else {
-            return null;
         }
     }
 }

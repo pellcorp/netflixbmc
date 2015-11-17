@@ -35,15 +35,14 @@ public class NetflixWebViewClient extends WebViewClient {
 
         logger.debug("shouldOverrideUrlLoading: {}", url);
 
-        if (url.contains("://www.netflix.com/watch/")) {
-            logger.debug("Sending Watch request to Kodi: {}", url);
-
-            client.sendToKodi(url);
+        if(checkUrl(url)) {
             return true;
-        } else {
-            view.loadUrl(url);
+        } else if(checkUrl(originalUrl)) {
             return true;
         }
+
+        view.loadUrl(url);
+        return true;
     }
 
     @Override
@@ -68,5 +67,20 @@ public class NetflixWebViewClient extends WebViewClient {
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+    }
+
+    private boolean checkUrl(String url) {
+        if(url == null) {
+            return false;
+        }
+
+        if(!url.contains("://www.netflix.com/watch/") ) {
+            return false;
+        }
+
+        logger.debug("Sending Watch request to Kodi: {}", url);
+        client.sendToKodi(url);
+
+        return true;
     }
 }
