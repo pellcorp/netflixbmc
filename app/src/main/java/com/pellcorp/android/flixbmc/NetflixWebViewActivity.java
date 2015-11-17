@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +15,12 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
+
+import com.pellcorp.android.flixbmc.web.LoginResponse;
+import com.pellcorp.android.flixbmc.web.NetflixClient;
+import com.pellcorp.android.flixbmc.web.NetflixClientImpl;
+import com.pellcorp.android.flixbmc.web.NetflixWebViewClientServiceProvider;
+import com.pellcorp.android.flixbmc.web.UserAgents;
 
 import org.apache.http.cookie.Cookie;
 import org.slf4j.Logger;

@@ -13,12 +13,12 @@ import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.pellcorp.android.flixbmc.jsonrpc.KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
+import static com.pellcorp.android.flixbmc.jsonrpc.KodiNetflixCheckerStatus.NORMAL;
+import static com.pellcorp.android.flixbmc.jsonrpc.KodiNetflixCheckerStatus.MISSING_PLUGIN;
+
 public class KodiNetflixChecker {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
-    
-	public enum KodiNetflixCheckerStatus {
-		CONNECT_EXCEPTION, MISSING_PLUGIN, NORMAL
-	}
 
 	public static final String PLUGIN_VIDEO_NETFLIXBMC = "plugin.video.netflixbmc";
 
@@ -40,7 +40,7 @@ public class KodiNetflixChecker {
 			return asyncTask.execute().get();
 		} catch (Exception e) {
 			logger.error("Failed to execute", e);
-			return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
+			return CONNECT_EXCEPTION;
 		}
     }
 
@@ -62,17 +62,17 @@ public class KodiNetflixChecker {
 				}
 
 				if (addonList.contains(PLUGIN_VIDEO_NETFLIXBMC)) {
-					return KodiNetflixCheckerStatus.NORMAL;
+					return NORMAL;
 				} else {
-					return KodiNetflixCheckerStatus.MISSING_PLUGIN;
+					return MISSING_PLUGIN;
 				}
 			} else {
-				return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
+				return CONNECT_EXCEPTION;
 			}
 		}
 		catch (Exception e) {
 			logger.error("Failed to execute", e);
-			return KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
+			return CONNECT_EXCEPTION;
 		}
 	}
 }

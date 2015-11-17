@@ -1,4 +1,4 @@
-package com.pellcorp.android.flixbmc;
+package com.pellcorp.android.flixbmc.web;
 
 public class NetflixUrl {
     private static String NETFLIX_DOMAIN = "www.netflix.com/";

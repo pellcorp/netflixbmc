@@ -1,4 +1,4 @@
-package com.pellcorp.android.flixbmc;
+package com.pellcorp.android.flixbmc.web;
 
 import android.content.Context;
 import android.webkit.WebResourceResponse;

@@ -1,4 +1,4 @@
-package com.pellcorp.android.flixbmc;
+package com.pellcorp.android.flixbmc.web;
 
 /**
  * Created by jason on 17/11/15.

@@ -1,4 +1,4 @@
-package com.pellcorp.android.flixbmc;
+package com.pellcorp.android.flixbmc.web;
 
 public class LoginResponse {
     private final String failureReason;

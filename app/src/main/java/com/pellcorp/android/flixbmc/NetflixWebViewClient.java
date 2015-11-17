@@ -2,13 +2,13 @@ package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.pellcorp.android.flixbmc.jsonrpc.MovieIdSender;
+import com.pellcorp.android.flixbmc.web.NetflixUrl;
+import com.pellcorp.android.flixbmc.web.NetflixWebViewClientServiceProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

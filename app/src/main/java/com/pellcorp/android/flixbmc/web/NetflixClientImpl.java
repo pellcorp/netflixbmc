@@ -1,7 +1,5 @@
-package com.pellcorp.android.flixbmc;
+package com.pellcorp.android.flixbmc.web;
 
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebResourceResponse;
 
 import org.apache.http.Header;

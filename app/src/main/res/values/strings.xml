@@ -33,7 +33,8 @@
 
     <string name="missing_settings">Missing Settings</string>
     <string name="invalid_kodi_settings">Invalid Kodi Settings</string>
-    
+    <string name="kodi_instance_not_accessible">"Kodi instance not accessible"</string>
+
     <string name="successful_submission">Successful Submission</string>
 
     <string name="login_failed">Login failed</string>

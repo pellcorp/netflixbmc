@@ -1,13 +1,13 @@
-package com.pellcorp.android.flixbmc.jsonrpc;
+package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.pellcorp.android.flixbmc.ActivityUtils;
-import com.pellcorp.android.flixbmc.NetflixUrl;
-import com.pellcorp.android.flixbmc.R;
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
+import com.pellcorp.android.flixbmc.jsonrpc.JsonClientResponse;
+import com.pellcorp.android.flixbmc.web.NetflixUrl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class MovieIdSender {
         this.activity = activity;
 	}
 	
-	public JsonClientResponse sendMovie(NetflixUrl url) {
+	public void sendMovie(NetflixUrl url) {
         AsyncTask<NetflixUrl, Integer, JsonClientResponse> asyncTask = new AsyncTask<NetflixUrl, Integer, JsonClientResponse>() {
             @Override
             protected void onPreExecute() {
@@ -41,23 +41,24 @@ public class MovieIdSender {
             protected void onPostExecute(JsonClientResponse result) {
                 if (result.isSuccess()) {
                     Toast.makeText(activity, R.string.successful_submission, Toast.LENGTH_SHORT).show();
+                    activity.finish();
                 } else if (result.isError()) {
-                    Dialog dialog = ActivityUtils.createErrorDialog(activity,
-                            activity.getString(R.string.unexpected_error),
-                            result.getErrorMessage(),
-                            false);
+                    Dialog dialog = ActivityUtils.createErrorDialog(
+                            activity,
+                            getString(R.string.invalid_kodi_settings),
+                            getString(R.string.kodi_instance_not_accessible),
+                            true);
                     dialog.show();
                 }
                 super.onPostExecute(result);
             }
         };
 
-        try {
-            return asyncTask.execute(url).get();
-        } catch (Exception e) {
-            logger.error("Failed to execute", e);
-            return new JsonClientResponse(e);
-        }
+        asyncTask.execute(url);
+    }
+
+    private String getString(int id) {
+        return activity.getString(id);
     }
 
     private JsonClientResponse doSendMovie(NetflixUrl netflixUrl) {
