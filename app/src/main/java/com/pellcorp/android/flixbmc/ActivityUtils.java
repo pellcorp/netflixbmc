@@ -84,7 +84,7 @@ public class ActivityUtils {
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.setContentView(R.layout.progress_dialog);
-        dialog.dismiss();
+        dialog.dismiss(); // hack to hide after its configured as we might not need it immediately
         return dialog;
     }
 }

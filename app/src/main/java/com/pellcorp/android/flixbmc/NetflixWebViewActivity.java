@@ -1,7 +1,9 @@
 package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -118,8 +120,30 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         if (webView.canGoBack()) {
             webView.goBack();
             return;
+        } else {
+            createConfirmExitDialog();
         }
-        super.onBackPressed();
+    }
+
+    public void createConfirmExitDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(NetflixWebViewActivity.this);
+
+        builder.setMessage(R.string.confirm_exit_message);
+
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+                NetflixWebViewActivity.this.finish();
+            }
+        });
+
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
@@ -227,4 +251,5 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             }
         }
     }
+
 }
