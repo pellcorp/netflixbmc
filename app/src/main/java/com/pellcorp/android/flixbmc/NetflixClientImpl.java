@@ -98,17 +98,6 @@ public class NetflixClientImpl implements NetflixClient {
 
             HttpResponse httpResponse = client.execute(get, localContext);
 
-            InputStream is = null;
-
-            if (url.contains("www.netflix.com/title")) {
-                String cookies = cookieManager.getCookie("www.netflix.com/title");
-                String content = EntityUtils.toString(httpResponse.getEntity());
-
-                is = new ByteArrayInputStream(content.getBytes("UTF-8"));
-            } else {
-                is = httpResponse.getEntity().getContent();
-            }
-
             String contentType = "text/html";
             Header contentTypeHeader = httpResponse.getEntity().getContentType();
             if (contentTypeHeader != null) {
@@ -116,7 +105,8 @@ public class NetflixClientImpl implements NetflixClient {
             }
 
             String charSet = EntityUtils.getContentCharSet(httpResponse.getEntity());
-            WebResourceResponse response = new WebResourceResponse(contentType, charSet, is);
+            WebResourceResponse response = new WebResourceResponse(contentType, charSet,
+                    httpResponse.getEntity().getContent());
 
             return response;
         } catch (Exception e) {
