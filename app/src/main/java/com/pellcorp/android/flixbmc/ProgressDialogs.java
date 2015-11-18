@@ -1,6 +1,7 @@
 package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -59,7 +60,10 @@ public class ProgressDialogs {
 
     private void show(ProgressDialog dialog) {
         if (dialog != null) {
-            dialog.show();
+            try {
+                dialog.show();
+            } catch (WindowManager.BadTokenException e) {
+            }
         }
     }
 
@@ -74,16 +78,15 @@ public class ProgressDialogs {
     private ProgressDialog createProgressDialog(int layout) {
         if (ctx != null) {
             ProgressDialog dialog = new ProgressDialog(ctx);
+            show(dialog);
 
             try {
-                dialog.show();
-            } catch (WindowManager.BadTokenException e) {
+                dialog.setCancelable(false);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.setContentView(layout);
+            } catch (Exception e) {
 
             }
-
-            dialog.setCancelable(false);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.setContentView(layout);
             return dialog;
         } else {
             return null;

@@ -55,7 +55,7 @@ public class ActivityUtils {
         }
 
         AlertDialog dialog = builder.create();
-        dialog.show();
+        show(dialog);
     }
 
     public static void createSettingsMissingDialog(final Activity activity, int messageId) {
@@ -73,8 +73,6 @@ public class ActivityUtils {
                 activity.startActivity(new Intent(
                         activity,
                         PreferenceActivity.class));
-
-                activity.finish();
             }
         });
 
@@ -86,6 +84,13 @@ public class ActivityUtils {
             }
         });
         AlertDialog dialog = builder.create();
-        dialog.show();
+        show(dialog);
+    }
+
+    private static void show(AlertDialog dialog) {
+        try {
+            dialog.show();
+        } catch (WindowManager.BadTokenException e) {
+        }
     }
 }
