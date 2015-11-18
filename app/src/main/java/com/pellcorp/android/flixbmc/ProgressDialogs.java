@@ -54,7 +54,7 @@ public class ProgressDialogs {
     }
 
     private boolean isShowing(ProgressDialog dialog) {
-        return welcomeDialog != null && dialog.isShowing();
+        return dialog != null && dialog.isShowing();
     }
 
     private void show(ProgressDialog dialog) {

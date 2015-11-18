@@ -73,6 +73,8 @@ public class ActivityUtils {
                 activity.startActivity(new Intent(
                         activity,
                         PreferenceActivity.class));
+
+                activity.finish();
             }
         });
 
