@@ -17,12 +17,11 @@ import org.slf4j.LoggerFactory;
 public class NetflixWebViewClient extends WebViewClient {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    private final ProgressDialogs progressDialog;
     private final NetflixWebViewClientServiceProvider client;
+    private final ProgressDialogs progressDialog;
 
-    public NetflixWebViewClient(
-            final NetflixWebViewClientServiceProvider client,
-            final ProgressDialogs progressDialog) {
+    public NetflixWebViewClient(final NetflixWebViewClientServiceProvider client,
+                                final ProgressDialogs progressDialog) {
         this.client = client;
         this.progressDialog = progressDialog;
     }
@@ -55,18 +54,15 @@ public class NetflixWebViewClient extends WebViewClient {
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        String originalUrl = view.getOriginalUrl();
+        super.onPageStarted(view, url, favicon);
 
         progressDialog.show();
-
-        super.onPageStarted(view, url, favicon);
     }
 
     @Override
     public void onPageFinished(WebView view, String url) {
-        String originalUrl = view.getOriginalUrl();
-
         super.onPageFinished(view, url);
+
         progressDialog.dismiss();
     }
 

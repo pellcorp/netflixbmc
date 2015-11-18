@@ -14,12 +14,14 @@ import static com.pellcorp.android.flixbmc.KodiNetflixCheckerStatus.MISSING_PLUG
 
 public class PreferenceActivity extends Activity implements KodiNetflixCheckerListener {
     private PreferenceFragment preferenceFragment = null;
+    private ProgressDialogs progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         preferenceFragment = new PreferenceFragment();
+        progressDialog = new ProgressDialogs(this);
 
         getFragmentManager().beginTransaction().replace(android.R.id.content, preferenceFragment).commit();
     }
@@ -47,8 +49,6 @@ public class PreferenceActivity extends Activity implements KodiNetflixCheckerLi
 
     private void checkSettings() {
         Preferences preferences = new Preferences(this);
-        ProgressDialog progressDialog = ActivityUtils.createProgressDialog(PreferenceActivity.this);
-
         KodiNetflixChecker checker = new KodiNetflixChecker(preferences, progressDialog);
         checker.doCheck(this);
     }

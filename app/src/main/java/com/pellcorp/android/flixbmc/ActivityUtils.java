@@ -86,28 +86,4 @@ public class ActivityUtils {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
-    public static ProgressDialog createProgressDialog(Context context) {
-        return createProgressDialog(context, R.layout.progress_dialog);
-    }
-
-    public static ProgressDialog createSplashDialog(Context context) {
-        return createProgressDialog(context, R.layout.welcome_progress_dialog);
-    }
-
-    public static ProgressDialog createProgressDialog(Context mContext, int layout) {
-        ProgressDialog dialog = new ProgressDialog(mContext);
-
-        try {
-            dialog.show();
-        } catch (WindowManager.BadTokenException e) {
-
-        }
-
-        dialog.setCancelable(false);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.setContentView(layout);
-        dialog.dismiss(); // hack to hide after its configured as we might not need it immediately
-        return dialog;
-    }
 }

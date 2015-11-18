@@ -28,9 +28,9 @@ public class KodiNetflixChecker {
 	public static final String PLUGIN_VIDEO_NETFLIXBMC = "plugin.video.netflixbmc";
 
 	private final JsonClient client;
-	private final ProgressDialog progressDialog;
+    private final ProgressDialogs progressDialog;
 
-	public KodiNetflixChecker(Preferences preferences, ProgressDialog progressDialog) {
+	public KodiNetflixChecker(Preferences preferences, final ProgressDialogs progressDialog) {
         this.client = new JsonClientImpl(
                 preferences.getString(R.string.pref_host_url),
                 preferences.getString(R.string.pref_kodi_username),
@@ -53,9 +53,7 @@ public class KodiNetflixChecker {
 
             @Override
             protected void onPostExecute(KodiNetflixCheckerStatus result) {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
+                progressDialog.dismiss();
 
                 listener.onPostExecute(result);
                 super.onPostExecute(result);

@@ -41,9 +41,9 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
     private WebView webView;
     private Bundle pausedState;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = null;
+    private ProgressDialogs progressDialog;
 
     private NetflixClient netflixClient;
-    private ProgressDialogs progressDialog;
 
     private NetflixEndpoint netflixEndpoint = NetflixEndpoint.DEFAULT;
 
@@ -57,8 +57,8 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUserAgentString(UserAgents.Mobile);
-        progressDialog = new ProgressDialogs(this);
 
+        progressDialog = new ProgressDialogs(this);
         NetflixWebViewClient viewClient = new NetflixWebViewClient(this, progressDialog);
         webView.setWebViewClient(viewClient);
 
@@ -219,6 +219,8 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
             loadNetflixTask.execute(username, password);
         } else {
+            progressDialog.dismiss();
+
             ActivityUtils.createSettingsMissingDialog(this, getString(R.string.invalid_netflix_settings));
         }
     }
@@ -235,7 +237,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
             for (Cookie cookie : cookies) {
                 String cookieString = cookie.getName() + "=" + cookie.getValue() + "; domain=" + cookie.getDomain();
-                cookieManager.setCookie("netflix.com", cookieString);
+                cookieManager.setCookie(".netflix.com", cookieString);
                 syncManager.sync();
             }
             return state;
