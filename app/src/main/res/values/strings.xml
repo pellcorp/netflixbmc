@@ -29,7 +29,7 @@
     <string name="pref_netflix_username">netflix_username</string>
     <string name="pref_netflix_password">netflix_password</string>
 
-    <string name="pref_apply_button">Apply</string>
+    <string name="settings_button">Settings</string>
 
     <string name="invalid_kodi_settings">Invalid Kodi Settings</string>
     <string name="kodi_instance_not_accessible">"Kodi instance not accessible"</string>
@@ -49,6 +49,7 @@
     <string name="netflix_not_responding">Netflix is not responding, please try again</string>
 
     <string name="ignore">Ignore</string>
+    <string name="retry">Retry</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="confirm_exit_message">Are you sure you want to Exit?</string>

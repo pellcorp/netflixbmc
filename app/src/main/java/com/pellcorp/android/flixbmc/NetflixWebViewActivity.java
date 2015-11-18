@@ -6,11 +6,13 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebResourceResponse;
@@ -39,19 +41,21 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = null;
 
     private NetflixClient netflixClient;
-    private ProgressDialog progressDialog;
+    private ProgressDialogs progressDialog;
+
+    private NetflixEndpoint netflixEndpoint = NetflixEndpoint.DEFAULT;
 
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
         setContentView(R.layout.webview);
 
-        webView = (WebView) findViewById(R.id.webView1);
+        webView = (WebView) findViewById(R.id.webView);
+        webView.setBackgroundColor(Color.TRANSPARENT);
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setUserAgentString(UserAgents.Mobile);
-
-        progressDialog = ActivityUtils.createProgressDialog(NetflixWebViewActivity.this);
+        progressDialog = new ProgressDialogs(this);
 
         NetflixWebViewClient viewClient = new NetflixWebViewClient(this, progressDialog);
         webView.setWebViewClient(viewClient);
@@ -64,7 +68,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                 if(getString(R.string.pref_netflix_username).equals(key)
                         || getString(R.string.pref_netflix_password).equals(key)) {
-                    tryLoginWithProgressDialog();
+                    tryLoginWithProgressDialog(false);
                 }
             }
         };
@@ -105,15 +109,6 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         // the call to this method is done in a non UI thread, so no need for an async task
         return netflixClient.loadUrl(url);
 	}
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        pausedState = new Bundle();
-        webView.saveState(pausedState);
-    }
-
 
     @Override
     public void onBackPressed() {
@@ -171,17 +166,28 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        pausedState = null;
+        if (webView.getOriginalUrl() != null) {
+            pausedState = new Bundle();
+            webView.saveState(pausedState);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         // we do not want to trigger a reload of the web view when we send out the SendToKodiActivity,
         // not sure how to handle that.
         if (pausedState == null) {
-            tryLoginWithProgressDialog();
+            tryLoginWithProgressDialog(true);
         }
     }
 
-    private void tryLoginWithProgressDialog() {
+    private void tryLoginWithProgressDialog(final boolean isWelcome) {
         Preferences preferences = new Preferences(this);
         String username = preferences.getString(R.string.pref_netflix_username);
         String password = preferences.getString(R.string.pref_netflix_password);
@@ -190,7 +196,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             AsyncTask<String, Void, LoginResponse> loadNetflixTask = new AsyncTask<String, Void, LoginResponse>() {
                 @Override
                 protected void onPreExecute() {
-                    progressDialog.show();
+                    progressDialog.show(isWelcome);
                 }
 
                 @Override
@@ -202,11 +208,8 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
                 @Override
                 protected void onPostExecute(LoginResponse result) {
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-
                     postLoginExecute(result);
+
                     super.onPostExecute(result);
                 }
             };
@@ -240,8 +243,11 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
     private void postLoginExecute(LoginResponse result) {
         if (result.isSuccessful()) {
-            webView.loadUrl("https://www.netflix.com");
+            // we don't dismiss the dialog, as we will reuse it in loading first page
+            webView.loadUrl(netflixEndpoint.getHomePage());
         } else {
+            progressDialog.dismiss();
+
             if (result.isInvalidCredentials()) {
                 ActivityUtils.createSettingsMissingDialog(this, R.string.netflix_invalid_credentials);
             } else if (result.isUnableToProcessRequest()) {
@@ -251,5 +257,4 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
             }
         }
     }
-
 }

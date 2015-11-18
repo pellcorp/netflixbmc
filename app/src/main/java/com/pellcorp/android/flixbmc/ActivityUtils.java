@@ -6,7 +6,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
+import android.view.Window;
 import android.view.WindowManager;
 
 public class ActivityUtils {
@@ -22,12 +25,13 @@ public class ActivityUtils {
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
 
-        builder.setPositiveButton(android.R.string.ok,
+        int positiveButton = dialogType.equals(DialogType.OK_RECREATE) ? R.string.retry : android.R.string.ok;
+        builder.setPositiveButton(positiveButton,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
 
-                        if (dialogType.equals(DialogType.OK_FINISH)) {
+                        if (dialogType.equals(DialogType.OK_FINISH) || dialogType.equals(DialogType.OK_FINISH_NO_CANCEL)) {
                             activity.finish();
                         } else if (dialogType.equals(DialogType.OK_RECREATE)) {
                             activity.recreate();
@@ -35,7 +39,7 @@ public class ActivityUtils {
                     }
                 });
 
-        if (!dialogType.equals(DialogType.OK_FINISH_NO_CANCEL)) {
+        if (dialogType.equals(DialogType.OK_FINISH) || dialogType.equals(DialogType.OK_RECREATE)) {
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.dismiss();
@@ -55,18 +59,20 @@ public class ActivityUtils {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage(message);
 
-        builder.setPositiveButton(R.string.settings_label, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.settings_button, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+
                 activity.startActivity(new Intent(
                         activity,
                         PreferenceActivity.class));
-                dialog.dismiss();
             }
         });
 
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.dismiss();
+
                 activity.finish();
             }
         });
@@ -74,7 +80,15 @@ public class ActivityUtils {
         dialog.show();
     }
 
-    public static ProgressDialog createProgressDialog(Context mContext) {
+    public static ProgressDialog createProgressDialog(Context context) {
+        return createProgressDialog(context, R.layout.progress_dialog);
+    }
+
+    public static ProgressDialog createSplashDialog(Context context) {
+        return createProgressDialog(context, R.layout.welcome_progress_dialog);
+    }
+
+    public static ProgressDialog createProgressDialog(Context mContext, int layout) {
         ProgressDialog dialog = new ProgressDialog(mContext);
 
         try {
@@ -84,8 +98,8 @@ public class ActivityUtils {
         }
 
         dialog.setCancelable(false);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setContentView(R.layout.progress_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setContentView(layout);
         dialog.dismiss(); // hack to hide after its configured as we might not need it immediately
         return dialog;
     }
