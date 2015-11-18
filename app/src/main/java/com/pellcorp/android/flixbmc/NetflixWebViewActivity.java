@@ -21,6 +21,8 @@ import android.webkit.WebView;
 import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_FINISH;
 import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_RECREATE;
 
+import com.pellcorp.android.flixbmc.web.HttpClientProvider;
+import com.pellcorp.android.flixbmc.web.HttpClientProviderImpl;
 import com.pellcorp.android.flixbmc.web.LoginResponse;
 import com.pellcorp.android.flixbmc.web.NetflixClient;
 import com.pellcorp.android.flixbmc.web.NetflixClientImpl;
@@ -60,7 +62,8 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
         NetflixWebViewClient viewClient = new NetflixWebViewClient(this, progressDialog);
         webView.setWebViewClient(viewClient);
 
-        netflixClient = new NetflixClientImpl();
+        HttpClientProvider clientProvider = new HttpClientProviderImpl(this);
+        netflixClient = new NetflixClientImpl(clientProvider.getHttpClient());
 
         Preferences preferences = new Preferences(this);
 
@@ -216,7 +219,7 @@ public class NetflixWebViewActivity extends Activity implements NetflixWebViewCl
 
             loadNetflixTask.execute(username, password);
         } else {
-            ActivityUtils.createSettingsMissingDialog(this, getString(R.string.invalid_kodi_settings));
+            ActivityUtils.createSettingsMissingDialog(this, getString(R.string.invalid_netflix_settings));
         }
     }
 

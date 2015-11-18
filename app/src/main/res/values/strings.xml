@@ -32,6 +32,7 @@
     <string name="settings_button">Settings</string>
 
     <string name="invalid_kodi_settings">Invalid Kodi Settings</string>
+    <string name="invalid_netflix_settings">Invalid Netflix Settings</string>
     <string name="kodi_instance_not_accessible">"Kodi instance not accessible"</string>
 
     <string name="play_on_kodi_request_successful">Play on Kodi Request Successful</string>

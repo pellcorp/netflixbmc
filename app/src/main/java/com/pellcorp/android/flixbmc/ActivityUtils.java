@@ -39,10 +39,17 @@ public class ActivityUtils {
                     }
                 });
 
-        if (dialogType.equals(DialogType.OK_FINISH) || dialogType.equals(DialogType.OK_RECREATE)) {
+        if (dialogType.equals(DialogType.OK_FINISH)) {
             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     dialog.dismiss();
+                }
+            });
+        } else if (dialogType.equals(DialogType.OK_RECREATE)) {
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                    activity.finish();
                 }
             });
         }

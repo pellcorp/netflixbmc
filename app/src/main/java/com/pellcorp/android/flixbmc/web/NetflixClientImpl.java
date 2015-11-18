@@ -7,16 +7,24 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -39,15 +47,11 @@ public class NetflixClientImpl implements NetflixClient {
 
     public static final String LOGIN_URL = "https://signup.netflix.com/Login";
 
-    private final DefaultHttpClient client;
+    private final HttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
 
-    public NetflixClientImpl() {
-        HttpParams params = new BasicHttpParams();
-        params.setParameter(AllClientPNames.USER_AGENT, UserAgents.Mobile);
-
-        this.client = new DefaultHttpClient(params);
-        this.client.setCookieStore(cookieStore);
+    public NetflixClientImpl(HttpClient client) {
+        this.client = client;
     }
 
     @Override
@@ -85,7 +89,7 @@ public class NetflixClientImpl implements NetflixClient {
             BasicClientCookie cookie = new BasicClientCookie("forceWebsite", "true");
             cookie.setDomain(".netflix.com");
             cookie.setPath("/");
-            cookieStore.addCookie(cookie);
+            getCookieStore().addCookie(cookie);
 
             localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
@@ -98,12 +102,13 @@ public class NetflixClientImpl implements NetflixClient {
             }
 
             String charSet = EntityUtils.getContentCharSet(httpResponse.getEntity());
+
             WebResourceResponse response = new WebResourceResponse(contentType, charSet,
                     httpResponse.getEntity().getContent());
 
             return response;
         } catch (Exception e) {
-            logger.error("Failed to load url" + url, e);
+            logger.error("Failed to load url: " + url, e);
 
             throw new NetflixClientException(e);
         }

@@ -7,6 +7,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.pellcorp.android.flixbmc.web.NetflixClientException;
 import com.pellcorp.android.flixbmc.web.NetflixUrl;
 import com.pellcorp.android.flixbmc.web.NetflixWebViewClientServiceProvider;
 
@@ -28,7 +29,12 @@ public class NetflixWebViewClient extends WebViewClient {
 
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-        return client.loadUrl(url);
+        try {
+            return client.loadUrl(url);
+        } catch (NetflixClientException e) {
+            logger.error("Failed to load url: " + url, e);
+            return null;
+        }
     }
 
     @Override
