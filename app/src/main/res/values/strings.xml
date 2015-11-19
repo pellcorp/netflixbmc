@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">*Flixbmc Client</string>
+    <string name="settings_short_label">Settings</string>
     <string name="settings_label">*Flixbmc Client Settings</string>
 
     <string name="settings_label_kodi">Kodi RPC Settings</string>
@@ -33,8 +34,9 @@
 
     <string name="invalid_kodi_settings">Invalid Kodi Settings</string>
     <string name="invalid_netflix_settings">Invalid Netflix Settings</string>
-    <string name="kodi_instance_not_accessible">"Kodi instance not accessible"</string>
+    <string name="kodi_instance_not_accessible">Kodi instance not accessible</string>
 
+    <string name="connecting_to_kodi">Connecting to Kodi...</string>
     <string name="play_on_kodi_request_successful">Play on Kodi Request Successful</string>
 
     <string name="login_failed">Login failed</string>
@@ -48,6 +50,7 @@
 
     <string name="netflix_invalid_credentials">Your Netflix Credentials are invalid.  Remember your password is case sensitive</string>
     <string name="netflix_not_responding">Netflix is not responding, please try again</string>
+    <string name="netflix_not_available">Netflix is not available</string>
 
     <string name="ignore">Ignore</string>
     <string name="retry">Retry</string>

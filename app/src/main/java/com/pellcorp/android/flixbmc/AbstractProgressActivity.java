@@ -8,7 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.WindowManager;
 
-public abstract class AbstractProgressActivity extends Activity implements ProgressSpinner {
+public abstract class AbstractProgressActivity extends Activity implements ProgressSpinner, StringProvider {
     private ProgressDialog progressDialog;
 
     private void init() {
@@ -38,6 +38,7 @@ public abstract class AbstractProgressActivity extends Activity implements Progr
             try {
                 progressDialog.show();
             } catch (WindowManager.BadTokenException e) {
+                e.printStackTrace();
             }
         }
     }

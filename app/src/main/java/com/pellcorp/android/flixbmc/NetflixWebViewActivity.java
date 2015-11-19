@@ -3,7 +3,6 @@ package com.pellcorp.android.flixbmc;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,7 +13,6 @@ import android.webkit.CookieSyncManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
-import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_FINISH;
 import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_FINISH_NO_CANCEL;
 import static com.pellcorp.android.flixbmc.ActivityUtils.DialogType.OK_RECREATE;
 
@@ -23,6 +21,7 @@ import com.pellcorp.android.flixbmc.web.HttpClientProviderImpl;
 import com.pellcorp.android.flixbmc.web.LoginResponse;
 import com.pellcorp.android.flixbmc.web.NetflixClient;
 import com.pellcorp.android.flixbmc.web.NetflixClientImpl;
+import com.pellcorp.android.flixbmc.web.NetflixEndpoint;
 import com.pellcorp.android.flixbmc.web.NetflixWebViewClientServiceProvider;
 import com.pellcorp.android.flixbmc.web.UserAgents;
 
@@ -51,7 +50,7 @@ public class NetflixWebViewActivity extends AbstractProgressActivity implements 
         this.savedInstanceState = savedInstanceState;
 
         HttpClientProvider clientProvider = new HttpClientProviderImpl(this);
-        netflixClient = new NetflixClientImpl(clientProvider.getHttpClient());
+        netflixClient = new NetflixClientImpl(clientProvider.getHttpClient(), this);
 	}
 
     @Override
@@ -218,11 +217,12 @@ public class NetflixWebViewActivity extends AbstractProgressActivity implements 
     private LoginResponse doLogin(String email, String password) {
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.removeAllCookie();
+        CookieSyncManager syncManager = CookieSyncManager.createInstance(this);
+        syncManager.sync();
 
         LoginResponse state = netflixClient.login(email, password);
 
         if (state.isSuccessful()) {
-            CookieSyncManager syncManager = CookieSyncManager.createInstance(this);
             List<Cookie> cookies = netflixClient.getCookieStore().getCookies();
 
             for (Cookie cookie : cookies) {

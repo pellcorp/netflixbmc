@@ -3,5 +3,5 @@
     <item
         android:id="@+id/settings"
         android:alphabeticShortcut="@string/settings_shortcut"
-        android:title="@string/settings_label"/>
+        android:title="@string/settings_short_label" />
 </menu>

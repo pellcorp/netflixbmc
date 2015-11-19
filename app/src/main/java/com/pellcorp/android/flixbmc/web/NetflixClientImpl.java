@@ -2,6 +2,9 @@ package com.pellcorp.android.flixbmc.web;
 
 import android.webkit.WebResourceResponse;
 
+import com.pellcorp.android.flixbmc.R;
+import com.pellcorp.android.flixbmc.StringProvider;
+
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -37,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,14 +49,16 @@ public class NetflixClientImpl implements NetflixClient {
 
     public static final int MAX_AUTH_PAGE_RETRIES = 10;
 
-    public static final String LOGIN_URL = "https://signup.netflix.com/Login";
+    public static final String LOGIN_URL = "https://www.netflix.com/Login";
 
+    private final StringProvider stringProvider;
     private final HttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
     private boolean isLoggedIn;
 
-    public NetflixClientImpl(HttpClient client) {
+    public NetflixClientImpl(HttpClient client, final StringProvider stringProvider) {
         this.client = client;
+        this.stringProvider = stringProvider;
     }
 
     @Override
@@ -127,7 +133,8 @@ public class NetflixClientImpl implements NetflixClient {
         try {
             String authUrl = getAuthUrl();
             if (authUrl == null) {
-                return new LoginResponse(false, "Pre-Login failure");
+                logger.info("Could not get the login page to show up");
+                return new LoginResponse(false, stringProvider.getString(R.string.login_failed));
             }
 
             HttpPost post = new HttpPost(LOGIN_URL);
@@ -160,7 +167,7 @@ public class NetflixClientImpl implements NetflixClient {
                         Element error = errors.get(0);
                         return new LoginResponse(false, error.text());
                     } else {
-                        return new LoginResponse(false, "Login failed");
+                        return new LoginResponse(false, stringProvider.getString(R.string.login_failed));
                     }
 
                 } else {
@@ -169,9 +176,11 @@ public class NetflixClientImpl implements NetflixClient {
                     return new LoginResponse(true, null);
                 }
             }
+        } catch (ConnectException e) {
+            return new LoginResponse(false, stringProvider.getString(R.string.netflix_not_available));
         } catch (Exception e) {
-            logger.error("Failed to login", e);
-            return new LoginResponse(false, e.getMessage());
+            logger.error("", e);
+            return new LoginResponse(false, stringProvider.getString(R.string.unexpected_error));
         }
     }
 

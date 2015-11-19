@@ -1,4 +1,4 @@
-package com.pellcorp.android.flixbmc;
+package com.pellcorp.android.flixbmc.web;
 
 /**
  * Created by jason on 18/11/15.
@@ -12,6 +12,10 @@ public class NetflixEndpoint {
     public NetflixEndpoint(final String domain, boolean isTls) {
         this.domain = domain;
         this.isTls = isTls;
+    }
+
+    public String getDomain() {
+        return domain;
     }
 
     public String getHomePage() {
