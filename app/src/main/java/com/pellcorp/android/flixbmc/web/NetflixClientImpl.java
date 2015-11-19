@@ -49,6 +49,7 @@ public class NetflixClientImpl implements NetflixClient {
 
     private final HttpClient client;
     private final CookieStore cookieStore = new BasicCookieStore();
+    private boolean isLoggedIn;
 
     public NetflixClientImpl(HttpClient client) {
         this.client = client;
@@ -57,6 +58,11 @@ public class NetflixClientImpl implements NetflixClient {
     @Override
     public CookieStore getCookieStore() {
         return cookieStore;
+    }
+
+    @Override
+    public boolean isLoggedIn() {
+        return isLoggedIn;
     }
 
     @Override
@@ -140,6 +146,8 @@ public class NetflixClientImpl implements NetflixClient {
 
             HttpResponse response = client.execute(post, localContext);
             if (response.getStatusLine().getStatusCode() == 302) {
+                this.isLoggedIn = true;
+
                 return new LoginResponse(true, null);
             } else { //if (response.getStatusLine().getStatusCode() == 200) {
                 String html = EntityUtils.toString(response.getEntity());
@@ -156,6 +164,8 @@ public class NetflixClientImpl implements NetflixClient {
                     }
 
                 } else {
+                    this.isLoggedIn = true;
+
                     return new LoginResponse(true, null);
                 }
             }

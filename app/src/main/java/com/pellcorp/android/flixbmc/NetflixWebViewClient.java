@@ -1,7 +1,5 @@
 package com.pellcorp.android.flixbmc;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -18,12 +16,11 @@ public class NetflixWebViewClient extends WebViewClient {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final NetflixWebViewClientServiceProvider client;
-    private final ProgressDialogs progressDialog;
+    private final ProgressSpinner progressSpinner;
 
-    public NetflixWebViewClient(final NetflixWebViewClientServiceProvider client,
-                                final ProgressDialogs progressDialog) {
-        this.client = client;
-        this.progressDialog = progressDialog;
+    public NetflixWebViewClient(final NetflixWebViewActivity activity) {
+        this.client = activity;
+        this.progressSpinner = activity;
     }
 
     @Override
@@ -56,14 +53,14 @@ public class NetflixWebViewClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
 
-        progressDialog.show();
+        progressSpinner.showSpinner();
     }
 
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
 
-        progressDialog.dismiss();
+        progressSpinner.hideSpinner();
     }
 
     private boolean checkUrl(String url) {

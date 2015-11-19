@@ -40,8 +40,7 @@ public class JsonClientImpl implements JsonClient {
         }
 
         if(username != null && password != null) {
-		    authenticator = new BasicAuthenticator();
-		    authenticator.setCredentials(username, password);
+		    authenticator = new BasicAuthenticator(username, password);
         } else {
             authenticator = null;
         }
@@ -83,8 +82,9 @@ public class JsonClientImpl implements JsonClient {
 			options.setConnectTimeout(10000);
 			options.setReadTimeout(30000);
 
-            if(authenticator != null)
-			    session.setConnectionConfigurator(authenticator);
+            if(authenticator != null) {
+                session.setConnectionConfigurator(authenticator);
+            }
 
 			session.setOptions(options);
 			

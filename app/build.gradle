@@ -21,7 +21,6 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:18.+'
     compile 'com.thetransactioncompany:jsonrpc2-client:1.15'
-    compile 'commons-codec:commons-codec:20041127.091804'
     compile 'org.slf4j:slf4j-android:1.7.12'
     compile 'org.jsoup:jsoup:1.6.2'
 }

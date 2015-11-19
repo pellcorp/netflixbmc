@@ -68,6 +68,8 @@ public class ActivityUtils {
 
         builder.setPositiveButton(R.string.settings_button, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+				// FIXME - for some reason this dialog is not being dismissed, or is it being 
+				// reloaded????
                 dialog.dismiss();
 
                 activity.startActivity(new Intent(

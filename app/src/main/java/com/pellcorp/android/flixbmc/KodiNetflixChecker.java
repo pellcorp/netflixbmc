@@ -1,15 +1,10 @@
 package com.pellcorp.android.flixbmc;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
 import com.pellcorp.android.flixbmc.jsonrpc.JsonClientResponse;
-import com.pellcorp.android.flixbmc.web.LoginResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,22 +23,22 @@ public class KodiNetflixChecker {
 	public static final String PLUGIN_VIDEO_NETFLIXBMC = "plugin.video.netflixbmc";
 
 	private final JsonClient client;
-    private final ProgressDialogs progressDialog;
+    private final ProgressSpinner progressSpinner;
 
-	public KodiNetflixChecker(Preferences preferences, final ProgressDialogs progressDialog) {
+	public KodiNetflixChecker(Preferences preferences, final ProgressSpinner progressSpinner) {
         this.client = new JsonClientImpl(
                 preferences.getString(R.string.pref_host_url),
                 preferences.getString(R.string.pref_kodi_username),
                 preferences.getString(R.string.pref_kodi_password));
 
-        this.progressDialog = progressDialog;
+        this.progressSpinner = progressSpinner;
 	}
 
     public void doCheck(final KodiNetflixCheckerListener listener) {
         AsyncTask<Void, Integer, KodiNetflixCheckerStatus> asyncTask = new AsyncTask<Void, Integer, KodiNetflixCheckerStatus>() {
             @Override
             protected void onPreExecute() {
-                progressDialog.show();
+                progressSpinner.showSpinner();
             }
 
             @Override
@@ -53,7 +48,7 @@ public class KodiNetflixChecker {
 
             @Override
             protected void onPostExecute(KodiNetflixCheckerStatus result) {
-                progressDialog.dismiss();
+                progressSpinner.hideSpinner();
 
                 listener.onPostExecute(result);
                 super.onPostExecute(result);

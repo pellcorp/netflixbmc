@@ -5,17 +5,15 @@ import com.thetransactioncompany.jsonrpc2.client.ConnectionConfigurator;
 import java.net.HttpURLConnection;
 
 public class BasicAuthenticator implements ConnectionConfigurator {
+    private final String user;
+    private final String pass;
 
-    private String user;
-    private String pass;
-
-    public void setCredentials(String user, String pass) {
+    public BasicAuthenticator(String user, String pass) {
         this.user = user;
         this.pass = pass;
     }
 
     public void configure(HttpURLConnection connection) {
-
         byte[] encodedBytes = Base64.encode((user + ":" + pass).getBytes(), Base64.DEFAULT);
 
         // add custom HTTP header

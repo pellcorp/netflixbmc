@@ -6,6 +6,7 @@ import org.apache.http.client.CookieStore;
 
 public interface NetflixClient {
     CookieStore getCookieStore();
+    boolean isLoggedIn();
     LoginResponse login(String email, String password);
     WebResourceResponse loadUrl(String url);
 }

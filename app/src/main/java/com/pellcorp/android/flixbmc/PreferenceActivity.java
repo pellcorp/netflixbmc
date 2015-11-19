@@ -2,26 +2,20 @@ package com.pellcorp.android.flixbmc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
-import com.pellcorp.android.flixbmc.jsonrpc.JsonClient;
-import com.pellcorp.android.flixbmc.jsonrpc.JsonClientImpl;
 
 import static com.pellcorp.android.flixbmc.KodiNetflixCheckerStatus.CONNECT_EXCEPTION;
 import static com.pellcorp.android.flixbmc.KodiNetflixCheckerStatus.MISSING_PLUGIN;
 
-public class PreferenceActivity extends Activity implements KodiNetflixCheckerListener {
+public class PreferenceActivity extends AbstractProgressActivity implements KodiNetflixCheckerListener {
     private PreferenceFragment preferenceFragment = null;
-    private ProgressDialogs progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         preferenceFragment = new PreferenceFragment();
-        progressDialog = new ProgressDialogs(this);
 
         getFragmentManager().beginTransaction().replace(android.R.id.content, preferenceFragment).commit();
     }
@@ -43,13 +37,13 @@ public class PreferenceActivity extends Activity implements KodiNetflixCheckerLi
                     R.string.invalid_kodi_settings,
                     R.string.kodi_instance_not_accessible);
         } else { // NORMAL
-            super.onBackPressed();
+            finish();
         }
     }
 
     private void checkSettings() {
         Preferences preferences = new Preferences(this);
-        KodiNetflixChecker checker = new KodiNetflixChecker(preferences, progressDialog);
+        KodiNetflixChecker checker = new KodiNetflixChecker(preferences, this);
         checker.doCheck(this);
     }
 
@@ -71,7 +65,7 @@ public class PreferenceActivity extends Activity implements KodiNetflixCheckerLi
         builder.setNegativeButton(R.string.ignore, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                PreferenceActivity.super.onBackPressed();
+                finish();
             }
         });
 
