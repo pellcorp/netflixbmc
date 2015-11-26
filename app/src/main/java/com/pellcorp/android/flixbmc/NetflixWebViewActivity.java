@@ -169,6 +169,8 @@ public class NetflixWebViewActivity extends AbstractProgressActivity implements 
 
             NetflixWebViewClient viewClient = new NetflixWebViewClient(this);
             webView.setWebViewClient(viewClient);
+            NetflixWebChromeClient chromeClient = new NetflixWebChromeClient(this);
+            webView.setWebChromeClient(chromeClient);
 
             if (savedInstanceState != null) {
                 webView.restoreState(savedInstanceState);
